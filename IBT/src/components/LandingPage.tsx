@@ -1,0 +1,1 @@
+export { LandingPage } from '@/src/features/home/components/LandingPage'

@@ -1,0 +1,302 @@
+'use client';
+
+import { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiSearch, FiCalendar, FiMail } from 'react-icons/fi';
+import { type PublicBlog } from '@/src/api/client';
+import { Pagination } from '@/src/shared/ui/Pagination';
+import { formatCategoryName } from '@/src/utils/category';
+
+type BlogListProps = {
+  initialBlogs: PublicBlog[];
+  apiOrigin: string;
+};
+
+const POSTS_PER_PAGE = 6;
+
+export function BlogList({ initialBlogs, apiOrigin }: BlogListProps) {
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All Posts');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory]);
+
+  const categories = useMemo(() => {
+    const cats = new Set(initialBlogs.map(b => b.category).filter(Boolean));
+    return ['All Posts', ...Array.from(cats)];
+  }, [initialBlogs]);
+
+  const resolveImageUrl = (imageUrl?: string | null) => {
+    if (!imageUrl?.trim()) return null;
+    if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
+    return `${apiOrigin}${imageUrl}`;
+  };
+
+  const getExcerpt = (text?: string | null) => {
+    if (!text) return '';
+    return text.replace(/<[^>]*>/g, '').replace(/&nbsp;/gi, ' ').trim().slice(0, 100) + '...';
+  };
+
+  const formatPublishedAt = (value?: string | null) => {
+    if (!value) return 'Latest edition';
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Latest edition';
+
+    return new Intl.DateTimeFormat('en', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(date);
+  };
+
+  const filteredBlogs = useMemo(() => {
+    return initialBlogs.filter(blog => {
+      const matchesSearch = blog.title.toLowerCase().includes(search.toLowerCase()) ||
+        (blog.description || '').toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = selectedCategory === 'All Posts' || blog.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [initialBlogs, search, selectedCategory]);
+
+  const totalPages = Math.ceil(filteredBlogs.length / POSTS_PER_PAGE);
+  const paginatedBlogs = useMemo(() => {
+    const start = (currentPage - 1) * POSTS_PER_PAGE;
+    return filteredBlogs.slice(start, start + POSTS_PER_PAGE);
+  }, [filteredBlogs, currentPage]);
+
+  // For Sidebar widgets
+  const popularPosts = initialBlogs.slice(0, 4);
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    initialBlogs.forEach(blog => {
+      if (blog.category) {
+        counts[blog.category] = (counts[blog.category] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [initialBlogs]);
+
+  return (
+    <div className="space-y-12">
+
+      {/* =====================================================
+          TOP BAR (Filters & Search)
+      ===================================================== */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-b border-slate-100 pb-8">
+
+        {/* Categories List */}
+        <div className="flex flex-nowrap gap-2 sm:gap-4 items-center overflow-x-auto pb-2 sm:pb-0 scrollbar-hide w-full lg:w-auto">
+          {categories.map(cat => (
+            <button
+              key={cat as string}
+              onClick={() => handleCategoryChange(cat as string)}
+              className={`whitespace-nowrap px-4 sm:px-5 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-300 ${selectedCategory === cat
+                ? 'bg-[#e63946] text-white shadow-md shadow-red-500/20'
+                : 'bg-transparent text-slate-600 hover:text-[#0f172a] hover:bg-slate-100'
+                }`}
+            >
+              {formatCategoryName(cat as string)}
+            </button>
+          ))}
+        </div>
+
+        {/* Search Input */}
+        <div className="relative w-full lg:w-[300px] shrink-0">
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search articles..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-slate-200 bg-white py-3 pl-11 pr-5 text-[14px] font-medium text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-[#e63946] focus:ring-1 focus:ring-[#e63946]"
+          />
+        </div>
+      </div>
+
+      {/* =====================================================
+          MAIN LAYOUT (Grid + Sidebar)
+      ===================================================== */}
+      <div className="grid lg:grid-cols-[1fr_350px] gap-12 items-start">
+
+        {/* LEFT COLUMN: Blog Grid */}
+        <div className="w-full">
+          <AnimatePresence mode="wait">
+            {paginatedBlogs.length > 0 ? (
+              <motion.div
+                key={selectedCategory + search + currentPage}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* 2-Column Grid */}
+                <div className="grid sm:grid-cols-2 gap-8">
+                  {paginatedBlogs.map((post) => (
+                    <Link key={post.id} href={`/blog/${post.slug}`} className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-shadow">
+
+                      {/* Thumbnail */}
+                      <div className="aspect-[16/10] overflow-hidden bg-slate-100 relative">
+                        {post.imageUrl ? (
+                          <img
+                            src={resolveImageUrl(post.imageUrl) || ''}
+                            alt={post.title}
+                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-300 italic text-xs font-bold uppercase tracking-widest">No Image</div>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 flex flex-col flex-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-3">
+                          {formatCategoryName(post.category) || 'IBT JOURNAL'}
+                        </p>
+                        <h3 className="text-[18px] sm:text-[20px] font-black text-[#0f172a] leading-snug mb-3 group-hover:text-[#e63946] transition-colors">
+                          {post.title}
+                        </h3>
+                        <p className="text-[14px] text-slate-500 font-medium leading-relaxed mb-6 line-clamp-2">
+                          {getExcerpt(post.description || post.content)}
+                        </p>
+
+                        <div className="mt-auto flex items-center gap-4 text-[12px] font-medium text-slate-400 pt-5 border-t border-slate-50">
+                          <span className="flex items-center gap-1.5"><FiCalendar /> {formatPublishedAt(post.publishedAt)}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-12 flex justify-center">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={(page) => {
+                        setCurrentPage(page);
+                        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else if (typeof window !== 'undefined') {
+                          window.scrollTo({ top: 400, behavior: 'smooth' });
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+              </motion.div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-200 py-20 text-center bg-white">
+                <p className="text-[18px] font-bold text-[#0f172a] mb-2">No articles found.</p>
+                <p className="text-[14px] text-slate-500 mb-6">We couldn't find anything matching your criteria.</p>
+                <button
+                  onClick={() => { setSearch(''); handleCategoryChange('All Posts'); }}
+                  className="px-6 py-3 bg-[#0f172a] text-white text-[13px] font-bold rounded-lg hover:bg-slate-800 transition-colors"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* RIGHT COLUMN: Sidebar */}
+        <div className="w-full flex flex-col gap-8">
+
+          {/* Popular Posts Widget */}
+          <div className="bg-white rounded-2xl p-6 lg:p-8 border border-slate-100 shadow-sm">
+            <h4 className="text-[16px] font-black text-[#0f172a] mb-3 pb-4">Popular Posts</h4>
+            <div className="flex flex-col gap-6">
+              {popularPosts.map((post) => (
+                <Link key={post.id} href={`/blog/${post.slug}`} className="group flex gap-4 items-center">
+                  <img
+                    src={resolveImageUrl(post.imageUrl) || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=200'}
+                    alt={post.title}
+                    className="w-20 h-16 rounded-lg object-cover bg-slate-100 shrink-0"
+                  />
+                  <div>
+                    <h5 className="text-[13px] font-bold text-[#0f172a] leading-snug line-clamp-2 mb-1 group-hover:text-[#e63946] transition-colors">
+                      {post.title}
+                    </h5>
+                    <p className="text-[11px] font-medium text-slate-400">
+                      {formatPublishedAt(post.publishedAt)}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Categories Widget */}
+          <div className="bg-white rounded-2xl p-6 lg:p-8 border border-slate-100 shadow-sm">
+            <h4 className="text-[16px] font-black text-[#0f172a] mb-3 pb-4">Categories</h4>
+            <div className="flex flex-col gap-4">
+              {/* All Posts */}
+              <button
+                onClick={() => handleCategoryChange('All Posts')}
+                className="flex items-center justify-between group w-full text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${selectedCategory === 'All Posts' ? 'border-[#e63946]' : 'border-red-100 group-hover:border-[#e63946]'
+                    }`}>
+                    <div className={`w-1.5 h-1.5 rounded-full bg-[#e63946] transition-opacity ${selectedCategory === 'All Posts' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      }`}></div>
+                  </div>
+                  <span className={`text-[14px] transition-colors ${selectedCategory === 'All Posts' ? 'text-[#0f172a] font-bold' : 'text-slate-600 group-hover:text-[#0f172a] font-medium'
+                    }`}>
+                    All Posts
+                  </span>
+                </div>
+                <span className={`text-[12px] font-bold px-2 py-0.5 rounded transition-colors ${selectedCategory === 'All Posts' ? 'text-[#e63946] bg-red-50' : 'text-slate-400 bg-slate-50'
+                  }`}>
+                  ({initialBlogs.length})
+                </span>
+              </button>
+
+              {/* Dynamic Categories */}
+              {Object.entries(categoryCounts).map(([cat, count]) => {
+                const isSelected = selectedCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => handleCategoryChange(cat)}
+                    className="flex items-center justify-between group w-full text-left"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-[#e63946]' : 'border-red-100 group-hover:border-[#e63946]'
+                        }`}>
+                        <div className={`w-1.5 h-1.5 rounded-full bg-[#e63946] transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                          }`}></div>
+                      </div>
+                      <span className={`text-[14px] transition-colors ${isSelected ? 'text-[#0f172a] font-bold' : 'text-slate-600 group-hover:text-[#0f172a] font-medium'
+                        }`}>
+                        {formatCategoryName(cat)}
+                      </span>
+                    </div>
+                    <span className={`text-[12px] font-bold px-2 py-0.5 rounded transition-colors ${isSelected ? 'text-[#e63946] bg-red-50' : 'text-slate-400 bg-slate-50'
+                      }`}>
+                      ({count})
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}

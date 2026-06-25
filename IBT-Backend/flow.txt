@@ -1,0 +1,14 @@
+1. Setup (server, prisma, utils, middleware) -
+2. Auth (User, JWT, guards) -
+3. Settings -
+4. Page + Section (CMS core) -
+5. Services
+6. Stats
+7. Testimonials
+8. Partners & Clients
+9. Team + Branch
+10. LabProject (IBT Labs)
+11. Blog
+12. Contact + Social
+13. Terms
+14. Pagination / filtering / polish

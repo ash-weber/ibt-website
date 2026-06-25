@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+	--ui-primary: #e63946;
+	--ui-primary-strong: #c1121f;
+	--ui-primary-soft: #fff1f2;
+	--ui-primary-softer: #ffe4e6;
+	--ui-danger: #ef4444;
+	--ui-danger-strong: #b91c1c;
+	--ui-neutral: #4b5563;
+	--ui-neutral-strong: #1e293b;
+	--ui-surface: #ffffff;
+	--ui-surface-muted: #f8fafc;
+	--ui-border: #e2e8f0;
+	--ui-border-strong: #cbd5e1;
+	--ui-text: #0f172a;
+	--ui-muted: #64748b;
+	--ui-radius-md: 0.75rem;
+	--ui-radius-lg: 1rem;
+	--ui-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+	--ui-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.02);
+	--ui-shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.04), 0 4px 6px -2px rgba(15, 23, 42, 0.01);
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: #f8fafc;
+}
+
+body {
+	color: var(--ui-text);
+	overflow-y: auto;
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	background: 
+		radial-gradient(circle at 10% 10%, rgba(254, 242, 242, 0.4) 0%, transparent 40%),
+		radial-gradient(circle at 90% 20%, rgba(240, 249, 255, 0.4) 0%, transparent 40%),
+		#f8fafc;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+/* Custom Scrollbar Styles */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #d1d5db;
+	border-radius: 3px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #9ca3af;
+	background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+	background-color: #6b7280;
+	background-clip: padding-box;
+}
+
+/* Firefox */
+* {
+	scrollbar-color: #d1d5db transparent;
+	scrollbar-width: thin;
+}

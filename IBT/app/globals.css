@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+:root {
+  /* RED, BLUE & WHITE THEME */
+  --ui-primary: #e63946;
+  /* Red */
+  --ui-secondary: #0077b6;
+  /* Blue */
+  --ui-primary-strong: #c1121f;
+  --ui-primary-soft: #f1faee;
+  /* Off-white/Greenish White */
+  --ui-primary-softer: #ffffff;
+  /* Pure White */
+  --ui-danger: #e11d48;
+  --ui-danger-strong: #be123c;
+  --ui-neutral: #1d3557;
+  /* Dark Blue */
+  --ui-neutral-strong: #000814;
+  --ui-surface: #ffffff;
+  --ui-surface-muted: #f8fafc;
+  --ui-border: #e5e7eb;
+  --ui-border-strong: #d1d5db;
+  --ui-text: #1d3557;
+  /* Navy Blue Text */
+  --ui-muted: #457b9d;
+  /* Muted Blue */
+  --ui-radius-md: 0.75rem;
+  --ui-radius-lg: 1rem;
+  --ui-shadow-md: 0 10px 25px rgba(29, 53, 87, 0.08);
+  --ui-shadow-lg: 0 25px 50px rgba(29, 53, 87, 0.16);
+}
+
+html,
+body {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+body {
+  color: var(--ui-text);
+  background: var(--ui-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  font-family: inherit;
+}
+
+.font-serif,
+.font-mono,
+.font-sans {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif !important;
+}
+
+code,
+kbd,
+pre,
+samp,
+tt {
+  font-family: inherit !important;
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 3px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+  background-clip: padding-box;
+}
+
+* {
+  scrollbar-color: #d1d5db transparent;
+  scrollbar-width: thin;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Base Headings Style */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ui-text);
+}
+
+@layer base {
+  h1 {
+    @apply text-[2rem] sm:text-[2.5rem] lg:text-[3rem] font-extrabold leading-[1.1] tracking-tight;
+  }
+
+  h2 {
+    @apply text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem] font-bold leading-[1.15] tracking-tight;
+  }
+
+  h3 {
+    @apply text-[1.25rem] sm:text-[1.5rem] lg:text-[18px] font-bold leading-[1.2] tracking-tight;
+  }
+}
+
+body {
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Rich Text Content Styling */
+.rich-text-content p {
+  margin-bottom: 1rem;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text-content ul,
+.rich-text-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.rich-text-content ul {
+  list-style-type: disc;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal;
+}
+
+/* Global typographic scale to ensure consistency across pages */
+html {
+  font-size: 16px;
+}
+
+body {
+  font-size: 1rem;
+}
+
+/* Headings overrides for specific non-standard contexts if needed */
+h4 {
+  font-size: 0.980rem;
+  line-height: 1.25;
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+  font-family: inherit;
+}
+
+h6 {
+  font-size: 0.375rem;
+  line-height: 1.3;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  font-family: inherit;
+}
+
+/* Paragraphs and small text */
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+small,
+.text-sm {
+  font-size: 0.875rem;
+}
+
+/* Rich text headings inside editor content */
+.rich-text-content h1,
+.rich-text-content h2,
+.rich-text-content h3,
+.rich-text-content h4,
+.rich-text-content h5,
+.rich-text-content h6 {
+  font-family: inherit;
+}
+/* Ensure buttons/labels inherit base font for consistency */
+button,
+input,
+select,
+textarea,
+label {
+  font-family: inherit;
+}
+
+
+
+/* Force word wrap on rich text output */
+.html-content,
+.rich-text-content,
+.html-content p,
+.rich-text-content p {
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Hide WhatsApp and scroll buttons when mobile nav is open */
+body.mobile-nav-open .whatsapp-btn-wrapper {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+html { scroll-behavior: smooth; }
