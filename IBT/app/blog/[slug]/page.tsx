@@ -99,20 +99,6 @@ function generateAutoSummary(title: string, htmlContent: string): string[] {
 }
 
 export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  try {
-    const blogs = await apiClient.getPublicBlogs(1, 100);
-    const paths = blogs.items.map((blog) => ({
-      slug: blog.slug,
-    }));
-    return paths.length > 0 ? paths : [{ slug: 'latest' }];
-  } catch (error) {
-    console.error('Error generating static params for blogs:', error);
-    return [{ slug: 'latest' }];
-  }
-}
 
 type BlogDetailPageProps = {
   params: Promise<{ slug: string }>

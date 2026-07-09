@@ -4,20 +4,6 @@ import { FiArrowLeft } from 'react-icons/fi'
 import { apiClient } from '@/src/api/client'
 
 export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  try {
-    const services = await apiClient.getServices(1, 100);
-    const paths = services.items.map((service) => ({
-      slug: service.slug,
-    }));
-    return paths.length > 0 ? paths : [{ slug: 'overview' }];
-  } catch (error) {
-    console.error('Error generating static params for services:', error);
-    return [{ slug: 'overview' }];
-  }
-}
 
 type ServiceDetailPageProps = {
   params: Promise<{ slug: string }>

@@ -39,43 +39,44 @@ export const submitLabIdea = asyncHandler(async (req: Request, res: Response) =>
     },
   });
 
-  // Notify Admin
-  try {
-    const adminEmailSetting = await prisma.setting.findUnique({
-      where: { key: SETTINGS.ADMIN_NOTIFICATION_EMAIL }
-    });
-    
-    // Fallback order: DB Setting -> MAIL_USER from .env
-    const adminEmailRaw = (adminEmailSetting?.value as string) || env.MAIL_USER;
-    
-    const { sendAdminLabIdeaNotification, sendUserLabIdeaAutoReply } = await import("../utils/mailer");
+  // Notify Admin & User (non-blocking background task)
+  (async () => {
+    try {
+      const adminEmailSetting = await prisma.setting.findUnique({
+        where: { key: SETTINGS.ADMIN_NOTIFICATION_EMAIL }
+      });
+      
+      // Fallback order: DB Setting -> MAIL_USER from .env
+      const adminEmailRaw = (adminEmailSetting?.value as string) || env.MAIL_USER;
+      
+      const { sendAdminLabIdeaNotification, sendUserLabIdeaAutoReply } = await import("../utils/mailer");
 
-    if (adminEmailRaw) {
-      const adminEmails = adminEmailRaw.split(',').map(e => e.trim()).filter(e => e);
+      if (adminEmailRaw) {
+        const adminEmails = adminEmailRaw.split(',').map(e => e.trim()).filter(e => e);
 
-      // Run in background so it doesn't block response
-      Promise.all(adminEmails.map(email => 
-        sendAdminLabIdeaNotification({
-          adminEmail: email,
-          firstName: labIdea.firstName,
-          lastName: labIdea.lastName,
-          email: labIdea.email,
-          category: labIdea.category,
-          ideaTitle: labIdea.ideaTitle,
-          description: labIdea.description,
-          attachments: attachments,
-        }).catch(err => console.error(`Failed to send admin notification to ${email}:`, err))
-      ));
+        await Promise.all(adminEmails.map(email => 
+          sendAdminLabIdeaNotification({
+            adminEmail: email,
+            firstName: labIdea.firstName,
+            lastName: labIdea.lastName,
+            email: labIdea.email,
+            category: labIdea.category,
+            ideaTitle: labIdea.ideaTitle,
+            description: labIdea.description,
+            attachments: attachments,
+          }).catch(err => console.error(`Failed to send admin notification to ${email}:`, err))
+        ));
+      }
+      
+      await sendUserLabIdeaAutoReply({
+        userEmail: labIdea.email,
+        userName: labIdea.firstName,
+        ideaTitle: labIdea.ideaTitle,
+      }).catch(err => console.error(`Failed to send user auto-reply to ${labIdea.email}:`, err));
+    } catch (error) {
+      console.error("Failed to send admin notification or user auto-reply:", error);
     }
-    
-    await sendUserLabIdeaAutoReply({
-      userEmail: labIdea.email,
-      userName: labIdea.firstName,
-      ideaTitle: labIdea.ideaTitle,
-    }).catch(err => console.error(`Failed to send user auto-reply to ${labIdea.email}:`, err));
-  } catch (error) {
-    console.error("Failed to send admin notification or user auto-reply:", error);
-  }
+  })();
 
   res.status(201).json(successResponse(labIdea, "Lab Idea submitted successfully"));
 });

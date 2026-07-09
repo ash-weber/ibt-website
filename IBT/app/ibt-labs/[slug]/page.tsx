@@ -4,20 +4,6 @@ import { apiClient } from '@/src/api/client'
 import { FiArrowLeft, FiExternalLink, FiGithub, FiLayers, FiCalendar } from 'react-icons/fi'
 
 export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  try {
-    const projects = await apiClient.getProjects(1, 100);
-    const paths = projects.items.map((project) => ({
-      slug: project.slug,
-    }));
-    return paths.length > 0 ? paths : [{ slug: 'featured' }];
-  } catch (error) {
-    console.error('Error generating static params for labs:', error);
-    return [{ slug: 'featured' }];
-  }
-}
 
 type LabDetailPageProps = {
   params: Promise<{ slug: string }>

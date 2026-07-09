@@ -119,48 +119,49 @@ export const submitApplication = asyncHandler(async (req: Request, res: Response
     },
   });
 
-  // Notify Admin
-  try {
-    const adminEmailSetting = await prisma.setting.findUnique({
-      where: { key: SETTINGS.ADMIN_NOTIFICATION_EMAIL }
-    });
-    
-    // Fallback order: DB Setting -> MAIL_USER from .env (mailtojasvanth88@gmail.com)
-    const adminEmailRaw = (adminEmailSetting?.value as string) || env.MAIL_USER;
-    
-    console.log("Attempting to notify admin:", adminEmailRaw);
-    
-    if (adminEmailRaw) {
-      const adminEmails = adminEmailRaw.split(',').map(e => e.trim()).filter(e => e);
+  // Notify Admin & User (non-blocking background task)
+  (async () => {
+    try {
+      const adminEmailSetting = await prisma.setting.findUnique({
+        where: { key: SETTINGS.ADMIN_NOTIFICATION_EMAIL }
+      });
+      
+      // Fallback order: DB Setting -> MAIL_USER from .env (mailtojasvanth88@gmail.com)
+      const adminEmailRaw = (adminEmailSetting?.value as string) || env.MAIL_USER;
+      
+      console.log("Attempting to notify admin:", adminEmailRaw);
+      
+      if (adminEmailRaw) {
+        const adminEmails = adminEmailRaw.split(',').map(e => e.trim()).filter(e => e);
 
-      // Run notifications in the background to prevent response blocking
-      Promise.all(adminEmails.map(email => 
-        sendAdminInternshipNotification({
-          adminEmail: email,
-          name: application.name,
-          email: application.email,
-          phone: application.phone,
-          jobType: application.jobType,
-          applicationType: application.applicationType,
-          about: application.about,
-          skills: application.skills,
-          resumeUrl: application.resumeUrl,
-        }).catch(err => console.error(`Failed to send admin notification to ${email}:`, err))
-      ));
-    } else {
-      console.error("No admin email found in settings or ENV!");
+        await Promise.all(adminEmails.map(email => 
+          sendAdminInternshipNotification({
+            adminEmail: email,
+            name: application.name,
+            email: application.email,
+            phone: application.phone,
+            jobType: application.jobType,
+            applicationType: application.applicationType,
+            about: application.about,
+            skills: application.skills,
+            resumeUrl: application.resumeUrl,
+          }).catch(err => console.error(`Failed to send admin notification to ${email}:`, err))
+        ));
+      } else {
+        console.error("No admin email found in settings or ENV!");
+      }
+
+      const { sendUserInternshipAutoReply } = await import("../utils/mailer");
+      await sendUserInternshipAutoReply({
+        userEmail: application.email,
+        userName: application.name,
+        applicationType: application.applicationType,
+      }).catch(err => console.error(`Failed to send user auto-reply to ${application.email}:`, err));
+
+    } catch (error) {
+      console.error("Failed to send admin notification or user auto-reply:", error);
     }
-
-    const { sendUserInternshipAutoReply } = await import("../utils/mailer");
-    await sendUserInternshipAutoReply({
-      userEmail: application.email,
-      userName: application.name,
-      applicationType: application.applicationType,
-    }).catch(err => console.error(`Failed to send user auto-reply to ${application.email}:`, err));
-
-  } catch (error) {
-    console.error("Failed to send admin notification or user auto-reply:", error);
-  }
+  })();
 
   res.status(201).json(successResponse(application, "Application submitted successfully"));
 });
