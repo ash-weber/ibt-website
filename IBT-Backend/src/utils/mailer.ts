@@ -32,11 +32,10 @@ export const getTransporter = async () => {
         user,
         pass,
       },
-      connectionTimeout: 10000, // 10 seconds timeout
+      connectionTimeout: 10000,
       greetingTimeout: 10000,
     });
 
-    // If using ZeptoMail, intercept SMTP calls and send via HTTP API to avoid port blocks on Render Free Tier
     if (host.toLowerCase().includes("zeptomail")) {
       const originalSendMail = transporter.sendMail.bind(transporter);
       
