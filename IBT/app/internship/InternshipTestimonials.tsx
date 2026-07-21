@@ -144,7 +144,7 @@ export function InternshipTestimonials({
                     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'
                   }
                   alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover bg-slate-100"
+                  className="w-12 h-12 rounded-full object-cover object-top bg-slate-100"
                 />
                 <div>
                   <h4 className="text-[15px] font-bold text-[#0f172a]">

@@ -81,7 +81,10 @@ const toPaginated = async <T>(
 
 const getBlogPublicWhere = (now: Date = new Date()) => ({
   status: BlogStatus.PUBLISHED,
-  publishedAt: { lte: now },
+  OR: [
+    { publishedAt: { lte: now } },
+    { publishedAt: null },
+  ],
 });
 
 const publicSettingKeys = [
@@ -594,9 +597,13 @@ export const getPublicFeaturedBlogs = async (filters: {
 };
 
 export const getPublicBlogBySlug = async (slug: string) => {
+  const decodedSlug = decodeURIComponent(slug).trim();
   const blog = await prisma.blog.findFirst({
     where: {
-      slug,
+      OR: [
+        { slug: decodedSlug },
+        { slug: { equals: decodedSlug, mode: "insensitive" } },
+      ],
       ...getBlogPublicWhere(),
     },
     select: {

@@ -210,7 +210,15 @@ export const getAllBlogs = async (filters: ListBlogFilters) => {
 };
 
 export const getBlogBySlug = async (slug: string) => {
-  const blog = await prisma.blog.findUnique({ where: { slug } });
+  const decodedSlug = decodeURIComponent(slug).trim();
+  const blog = await prisma.blog.findFirst({
+    where: {
+      OR: [
+        { slug: decodedSlug },
+        { slug: { equals: decodedSlug, mode: "insensitive" } },
+      ],
+    },
+  });
 
   if (!blog) {
     throw httpError(404, "Blog not found");

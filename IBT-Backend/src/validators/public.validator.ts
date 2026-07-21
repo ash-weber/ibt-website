@@ -26,11 +26,10 @@ export const publicPaginationQuerySchema = z
 
 export const publicSlugParamSchema = z.object({
   slug: z
-    .string("Slug is required")
+    .string({ required_error: "Slug is required" })
     .trim()
-    .min(2, "Slug must be at least 2 characters long")
-    .max(160, "Slug must be at most 160 characters long")
-    .regex(slugRegex, "Slug must use lowercase letters, numbers, and hyphens only"),
+    .min(1, "Slug is required")
+    .max(300, "Slug is too long"),
 });
 
 export const publicBranchIdParamSchema = z.object({

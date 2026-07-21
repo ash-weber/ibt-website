@@ -168,7 +168,7 @@ export function TestimonialsSection() {
                           <img
                             src={item.avatarUrl}
                             alt={item.name}
-                            className="h-full w-full rounded-full object-cover"
+                            className="h-full w-full rounded-full object-cover object-top"
                           />
                         ) : (
                           item.name?.charAt(0).toUpperCase()

@@ -545,7 +545,7 @@ export default function AboutPage() {
                                 <img
                                   src={member.avatarUrl}
                                   alt={member.name}
-                                  className="w-full h-full object-cover"
+                                  className="w-full h-full object-cover object-top"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-300">

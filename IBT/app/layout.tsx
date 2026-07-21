@@ -89,7 +89,7 @@ export default async function RootLayout({
             <WhatsappButton />
           </MaintenanceOverlay>
         </SocketSettingsProvider>
-        <GoogleAnalytics gaId="G-9JXSK0Z7K3" />
+        <GoogleAnalytics gaId={process.env.GoogleAnalyticscode as string} />
       </body>
     </html>
   );

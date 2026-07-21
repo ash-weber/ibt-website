@@ -33,13 +33,10 @@ const parseNullableDate = (value: unknown) => {
 };
 
 const blogSlugSchema = z
-  .string("Blog slug is required")
-  .min(2, "Blog slug must be at least 2 characters long")
-  .max(160, "Blog slug must be at most 160 characters long")
-  .regex(
-    slugRegex,
-    "Blog slug must use lowercase letters, numbers, and hyphens only"
-  );
+  .string({ required_error: "Blog slug is required" })
+  .trim()
+  .min(1, "Blog slug must be at least 1 character long")
+  .max(300, "Blog slug must be at most 300 characters long");
 
 const blogTitleSchema = z
   .string("Blog title is required")

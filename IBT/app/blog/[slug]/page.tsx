@@ -140,11 +140,15 @@ const formatPublishedAt = (value?: string | null) => {
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug } = await params
+  const decodedSlug = decodeURIComponent(slug).trim()
   const allBlogsData = await apiClient.getPublicBlogs(1, 100).catch(() => ({ items: [] }));
   const allBlogs = allBlogsData.items;
   
-  const currentIndex = allBlogs.findIndex((b) => b.slug === slug);
-  const blog = await apiClient.getPublicBlogBySlug(slug).catch(() => null);
+  const currentIndex = allBlogs.findIndex((b) => b.slug === slug || b.slug === decodedSlug);
+  let blog = await apiClient.getPublicBlogBySlug(slug).catch(() => null);
+  if (!blog && slug !== decodedSlug) {
+    blog = await apiClient.getPublicBlogBySlug(decodedSlug).catch(() => null);
+  }
 
   if (!blog) {
     notFound()
