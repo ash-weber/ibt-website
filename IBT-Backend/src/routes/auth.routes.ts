@@ -5,7 +5,7 @@ import { loginSchema } from "../validators/auth.validator";
 import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
-
+//Authenticate and validate
 router.post("/login", validate(loginSchema), login);
 router.get("/me", authenticate, getMe);
 
