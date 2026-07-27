@@ -47,6 +47,8 @@ export const createServiceSchema = z.object({
     .url("Project URL must be a valid URL")
     .optional()
     .or(z.literal("")),
+  categoryType: z.enum(["SERVICE", "PRODUCT"]).optional(),
+  isFeatured: z.boolean().optional(),
   order: z
     .number("Service order must be a number")
     .int("Service order must be an integer")
@@ -80,6 +82,8 @@ export const updateServiceSchema = z
       .url("Project URL must be a valid URL")
       .optional()
       .or(z.literal("")),
+    categoryType: z.enum(["SERVICE", "PRODUCT"]).optional(),
+    isFeatured: z.boolean().optional(),
     order: z
       .number("Service order must be a number")
       .int("Service order must be an integer")
@@ -101,6 +105,12 @@ export const serviceSlugParamSchema = z.object({
 export const listServiceQuerySchema = z.object({
   search: z.string().trim().min(1).max(100).optional(),
   tag: z.string().trim().min(1).max(40).optional(),
+  categoryType: z.string().trim().optional(),
+  isFeatured: z.preprocess((val) => {
+    if (val === 'true') return true;
+    if (val === 'false') return false;
+    return val;
+  }, z.boolean().optional()),
   page: z.coerce.number().int().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(100).optional(),
 }).refine((data) => (data.page === undefined) === (data.limit === undefined), {

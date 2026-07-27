@@ -78,7 +78,7 @@ export function AllServicesPage() {
     setLoading(true);
 
     try {
-      const result = await apiClient.getServices(1, 100);
+      const result = await apiClient.getServices(1, 100, 'SERVICE');
       setServices(result.items);
     } catch (err) {
       console.warn('Failed to load services:', err);

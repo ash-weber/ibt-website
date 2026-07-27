@@ -83,7 +83,7 @@ export function ServicesSection() {
     setError(null);
     try {
       // Increased to 8 to allow more dynamic cards from admin panel
-      const result = await apiClient.getServices(1, 8);
+      const result = await apiClient.getServices(1, 8, 'SERVICE');
       setServices(result.items);
       setMeta(result.meta ?? {});
     } catch (err) {

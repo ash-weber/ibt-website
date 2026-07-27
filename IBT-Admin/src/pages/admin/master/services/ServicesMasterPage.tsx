@@ -34,6 +34,8 @@ const EMPTY_FORM: ServiceCreateEditFormValues = {
   tags: '',
   imageUrl: '',
   projectUrl: '',
+  categoryType: 'SERVICE',
+  isFeatured: false,
 }
 
 function getApiErrorMessage(error: unknown, fallback: string) {
@@ -56,6 +58,8 @@ function mapItemToForm(item: ServiceMasterItem): ServiceCreateEditFormValues {
     tags: item.tags.join(', '),
     imageUrl: item.imageUrl,
     projectUrl: item.projectUrl || '',
+    categoryType: item.categoryType || 'SERVICE',
+    isFeatured: Boolean(item.isFeatured),
   }
 }
 
@@ -160,9 +164,9 @@ export function ServicesMasterPage() {
     setDeleteTarget({ id: item.id, label: item.title })
   }
   
-    const handleViewDetails = (item: ServiceMasterItem) => {
-      navigate(`/admin/master/services/${item.id}`)
-    }
+  const handleViewDetails = (item: ServiceMasterItem) => {
+    openEditModal(item)
+  }
 
   const confirmDelete = () => {
     if (!deleteTarget) {
@@ -189,6 +193,8 @@ export function ServicesMasterPage() {
         imageUrl,
         tags: parseTags(values.tags),
         projectUrl: values.projectUrl?.trim() || undefined,
+        categoryType: values.categoryType,
+        isFeatured: values.isFeatured,
       }
 
       if (mode === 'create') {

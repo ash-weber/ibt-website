@@ -26,7 +26,7 @@ export const publicPaginationQuerySchema = z
 
 export const publicSlugParamSchema = z.object({
   slug: z
-    .string({ required_error: "Slug is required" })
+    .string()
     .trim()
     .min(1, "Slug is required")
     .max(300, "Slug is too long"),
@@ -53,6 +53,8 @@ export const publicProjectListQuerySchema = publicPaginationQuerySchema.extend({
 export const publicServiceListQuerySchema = publicPaginationQuerySchema.extend({
   search: z.string().trim().min(1).max(120).optional(),
   tag: z.string().trim().min(1).max(40).optional(),
+  categoryType: z.string().trim().optional(),
+  isFeatured: z.preprocess(parseBoolean, z.boolean().optional()),
 });
 
 export const publicTeamListQuerySchema = publicPaginationQuerySchema.extend({

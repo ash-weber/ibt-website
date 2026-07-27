@@ -10,6 +10,8 @@ type CreateServiceInput = {
   imageUrl: string;
   projectUrl?: string;
   tags?: string[];
+  categoryType?: string;
+  isFeatured?: boolean;
   order?: number;
 };
 
@@ -20,12 +22,16 @@ type UpdateServiceInput = {
   imageUrl?: string;
   projectUrl?: string;
   tags?: string[];
+  categoryType?: string;
+  isFeatured?: boolean;
   order?: number;
 };
 
 type ListServiceFilters = {
   search?: string;
   tag?: string;
+  categoryType?: string;
+  isFeatured?: boolean;
   page?: number;
   limit?: number;
 };
@@ -89,6 +95,8 @@ export const createService = async (input: CreateServiceInput, userId?: string) 
           imageUrl: input.imageUrl,
           projectUrl: input.projectUrl,
           tags: normalizeTags(input.tags),
+          categoryType: input.categoryType || "SERVICE",
+          isFeatured: input.isFeatured ?? false,
           order: desiredOrder,
         },
       });
@@ -130,6 +138,8 @@ export const getAllServices = async (filters: ListServiceFilters) => {
           has: filters.tag.toLowerCase(),
         }
       : undefined,
+    categoryType: filters.categoryType ? filters.categoryType : undefined,
+    isFeatured: filters.isFeatured !== undefined ? filters.isFeatured : undefined,
   };
 
   if (!shouldPaginate) {
@@ -225,6 +235,8 @@ export const updateService = async (
           imageUrl: input.imageUrl,
           projectUrl: input.projectUrl,
           tags: input.tags ? normalizeTags(input.tags) : undefined,
+          categoryType: input.categoryType,
+          isFeatured: input.isFeatured,
           order: targetOrder,
         },
       });
