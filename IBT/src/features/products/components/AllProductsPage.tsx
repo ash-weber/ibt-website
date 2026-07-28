@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { apiClient, type PublicService } from '@/src/api/client';
 import { resolveImageUrl } from '@/src/utils/image';
 import { generateKeyHighlights } from '@/src/utils/highlights';
+import { Loader } from '@/src/shared/ui/Loader';
 import {
   FiArrowRight,
   FiBriefcase,
@@ -153,162 +154,7 @@ export interface ProductProject {
 
 
 
-const allProjects: ProductProject[] = [
-  {
-    id: 'bloomcraft',
-    slug: 'bloomcraft',
-    title: 'BloomCraft',
-    category: 'AI',
-    description: 'AI powered personal growth platform that helps users achieve goals through personalized assessments.',
-    longDescription: 'BloomCraft is an AI-driven personal development ecosystem designed to empower individuals with custom roadmap creation, daily goal tracking, intelligent skill evaluation, and real-time habit optimization algorithms.',
-    tags: ['React', 'Node.js', 'MongoDB', 'AI'],
-    icon: FiZap,
-    iconColor: 'text-rose-500',
-    iconBg: 'bg-rose-50',
-    mockupType: 'bloomcraft',
-    features: ['AI Goal Assessment Engine', 'Personalized Growth Roadmaps', 'Habit Tracking Analytics', 'Interactive Progress Dashboard']
-  },
-  {
-    id: 'ibt-website',
-    slug: 'ibt-website',
-    title: 'IBT Website',
-    category: 'Web',
-    description: 'Corporate website for I-BACUS TECH showcasing services, portfolio, and company information.',
-    longDescription: 'The official digital flagship for I-BACUS TECH, built with high-performance SSR architecture, interactive WebGL accents, real-time WebSocket dynamic state, and high conversion landing pages.',
-    tags: ['Next.js', 'React', 'Prisma', 'MongoDB'],
-    icon: FiGlobe,
-    iconColor: 'text-sky-600',
-    iconBg: 'bg-sky-50',
-    mockupType: 'ibtwebsite',
-    features: ['Server-Side Rendered Next.js 16', 'Realtime Socket Updates', 'Custom CMS Integration', 'SEO Optimized Architecture']
-  },
-  {
-    id: 'career-sheet',
-    slug: 'career-sheet',
-    title: 'Career Sheet',
-    category: 'Web',
-    description: 'Job portal platform with resume builder, job tracking, and career management solutions.',
-    longDescription: 'Career Sheet is an enterprise talent acquisition & job management platform offering automated ATS resume scoring, candidate tracking, direct employer chat, and automated application pipelines.',
-    tags: ['React', 'Node.js', 'MongoDB', 'Express'],
-    icon: FiBriefcase,
-    iconColor: 'text-indigo-600',
-    iconBg: 'bg-indigo-50',
-    mockupType: 'careersheet',
-    features: ['Automated ATS Resume Analyzer', 'Job Application Pipeline', 'Recruiter Dashboard', 'Real-time Chat System']
-  },
-  {
-    id: 'ai-interview',
-    slug: 'ai-interview',
-    title: 'AI Interview System',
-    category: 'AI',
-    description: 'AI-powered mock interview platform with voice & technical evaluation.',
-    longDescription: 'An intelligent automated interviewing solution that analyzes verbal fluency, technical code accuracy, body gesture indicators, and provides detailed AI candidate feedback reports.',
-    tags: ['React', 'Python', 'AI', 'OpenCV'],
-    icon: FiCpu,
-    iconColor: 'text-purple-600',
-    iconBg: 'bg-purple-50',
-    mockupType: 'aiinterview',
-    features: ['Real-time Speech Recognition', 'Technical Code Analysis', 'Computer Vision Gesture Tracking', 'Automated Score Card']
-  },
-  {
-    id: 'innovation-coach',
-    slug: 'innovation-coach',
-    title: 'Innovation Coach',
-    category: 'Enterprise',
-    description: 'Idea management platform for innovation and collaboration.',
-    longDescription: 'A collaborative corporate brain-storming suite allowing multi-disciplinary teams to submit startup concepts, vote on roadmaps, measure ROI, and execute sprint milestones.',
-    tags: ['React', 'Node.js', 'Socket.io'],
-    icon: FiZap,
-    iconColor: 'text-amber-500',
-    iconBg: 'bg-amber-50',
-    mockupType: 'innovation',
-    features: ['Real-time Whiteboard Canvas', 'Collaborative Idea Voting', 'Milestone & ROI Tracking', 'Multi-tenant Enterprise Workspaces']
-  },
-  {
-    id: 'ecommerce-platform',
-    slug: 'ecommerce-platform',
-    title: 'E-Commerce Platform',
-    category: 'Web',
-    description: 'Full-featured e-commerce solution with admin dashboard.',
-    longDescription: 'Next-generation omni-channel commerce portal featuring automated inventory synchronization, instant checkout flow, multi-currency support, and comprehensive merchant analytics.',
-    tags: ['Next.js', 'Node.js', 'MongoDB'],
-    icon: FiShoppingCart,
-    iconColor: 'text-emerald-600',
-    iconBg: 'bg-emerald-50',
-    mockupType: 'ecommerce',
-    features: ['High Performance Digital Storefront', 'Integrated Payment Gateways', 'Realtime Inventory Management', 'Merchant Analytics & Reports']
-  },
-  {
-    id: 'hospital-management',
-    slug: 'hospital-management',
-    title: 'Hospital Management',
-    category: 'Enterprise',
-    description: 'Hospital management system with appointments and billing.',
-    longDescription: 'HIPAA-compliant healthcare management portal handling patient EHR records, doctor appointment scheduling, pharmacy stock management, and electronic billing modules.',
-    tags: ['React', 'Node.js', 'MySQL'],
-    icon: FiPlusSquare,
-    iconColor: 'text-teal-600',
-    iconBg: 'bg-teal-50',
-    mockupType: 'hospital',
-    features: ['Electronic Health Records (EHR)', 'Doctor & OPD Scheduling', 'Pharmacy & Lab Billing', 'Patient Portal & Telehealth']
-  },
-  {
-    id: 'school-erp',
-    slug: 'school-erp',
-    title: 'School ERP',
-    category: 'Enterprise',
-    description: 'Complete school management solution for admin, staff & students.',
-    longDescription: 'All-in-one educational institute management system handling online admissions, fee collection gateways, grade book reports, student attendance, and parent communication channels.',
-    tags: ['React', 'Node.js', 'MongoDB'],
-    icon: FiBookOpen,
-    iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-50',
-    mockupType: 'school',
-    features: ['Student & Teacher Portals', 'Automated Fee Collection', 'Gradebook & Exam Generator', 'Parent Push Notifications']
-  },
-  {
-    id: 'task-flow',
-    slug: 'task-flow',
-    title: 'TaskFlow',
-    category: 'Web',
-    description: 'Project management tool for teams to collaborate and track tasks.',
-    longDescription: 'Agile task management dynamic app featuring drag-and-drop Kanban boards, Gantt timelines, time tracking widgets, and deep GitHub/Slack workflow integrations.',
-    tags: ['React', 'Express', 'MongoDB'],
-    icon: FiCheckSquare,
-    iconColor: 'text-indigo-600',
-    iconBg: 'bg-indigo-50',
-    mockupType: 'taskflow',
-    features: ['Drag & Drop Kanban Boards', 'Gantt Chart Timelines', 'Built-in Time Tracker', 'Third-Party Integration API']
-  },
-  {
-    id: 'portfolio-builder',
-    slug: 'portfolio-builder',
-    title: 'Portfolio Builder',
-    category: 'UI/UX',
-    description: 'Dynamic portfolio builder for professionals and developers.',
-    longDescription: 'A modern drag-and-drop website builder tailored for software engineers and creative professionals to generate SEO-ready personal brand websites in minutes.',
-    tags: ['React', 'Tailwind CSS', 'Node.js'],
-    icon: FiUser,
-    iconColor: 'text-violet-600',
-    iconBg: 'bg-violet-50',
-    mockupType: 'portfolio',
-    features: ['Custom Themes & Dark Mode', 'GitHub Repository Sync', 'Custom Domain Support', 'Instant One-Click Deployment']
-  },
-  {
-    id: 'food-delivery',
-    slug: 'food-delivery',
-    title: 'Food Delivery App',
-    category: 'Mobile',
-    description: 'Food delivery app with real-time tracking and payments.',
-    longDescription: 'Cross-platform mobile & web food ordering ecosystem with real-time GPS courier tracking, interactive restaurant menus, stripe checkout, and rider delivery apps.',
-    tags: ['Flutter', 'Firebase', 'Maps'],
-    icon: FiTruck,
-    iconColor: 'text-orange-500',
-    iconBg: 'bg-orange-50',
-    mockupType: 'fooddelivery',
-    features: ['Live GPS Courier Tracker', 'Interactive Restaurant Menus', 'In-App Secure Payment', 'Customer & Driver Mobile Apps']
-  }
-];
+
 
 // Custom SVGs for High Resolution Device Mockups
 function DeviceMockupFrame({ type, title, imageUrl }: { type: string; title: string; imageUrl?: string | null }) {
@@ -536,8 +382,7 @@ export function AllProductsPage() {
   const [visibleCount, setVisibleCount] = useState(100);
 
   // Determine displayed projects
-  const hasDynamic = dynamicProducts.length > 0;
-  const currentAllProjects = hasDynamic ? dynamicProducts : allProjects;
+  const currentAllProjects = dynamicProducts;
   const displayedAllProjects = currentAllProjects.slice(0, visibleCount);
 
 
@@ -676,63 +521,73 @@ export function AllProductsPage() {
             </span>
           </div>
 
-          {/* 8 Grid Project Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {displayedAllProjects.map((project) => {
-              const IconComp = project.icon;
-              return (
-                <div
-                  key={project.id}
-                  className="group bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between"
-                >
-                  {/* Top Preview */}
-                  <div className="p-3 bg-slate-100/60 border-b border-slate-100">
-                    <DeviceMockupFrame type={project.mockupType} title={project.title} imageUrl={project.imageUrl} />
-                  </div>
+          {/* Loading or Projects Grid */}
+          {loading ? (
+            <div className="py-20 flex flex-col items-center justify-center gap-3">
+              <Loader size="lg" label="Loading products..." />
+            </div>
+          ) : currentAllProjects.length === 0 ? (
+            <div className="py-16 text-center text-slate-500 font-semibold border border-dashed border-slate-200 rounded-2xl">
+              No products available at the moment.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {displayedAllProjects.map((project) => {
+                const IconComp = project.icon;
+                return (
+                  <div
+                    key={project.id}
+                    className="group bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                  >
+                    {/* Top Preview */}
+                    <div className="p-3 bg-slate-100/60 border-b border-slate-100">
+                      <DeviceMockupFrame type={project.mockupType} title={project.title} imageUrl={project.imageUrl} />
+                    </div>
 
-                  {/* Body */}
-                  <div className="p-4 flex-1 flex flex-col justify-between">
-                    <div>
-                      {/* Icon + Title */}
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${project.iconBg} ${project.iconColor}`}>
-                          <IconComp size={15} />
+                    {/* Body */}
+                    <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div>
+                        {/* Icon + Title */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${project.iconBg} ${project.iconColor}`}>
+                            <IconComp size={15} />
+                          </div>
+                          <h4 className="text-sm font-bold text-[#0f172a] line-clamp-1">{project.title}</h4>
                         </div>
-                        <h4 className="text-sm font-bold text-[#0f172a] line-clamp-1">{project.title}</h4>
+
+                        {/* Description */}
+                        <p className="text-xs text-slate-600 leading-relaxed mb-3 line-clamp-3 overflow-hidden break-words">
+                          {stripHtml(project.description)}
+                        </p>
                       </div>
 
-                      {/* Description */}
-                      <p className="text-xs text-slate-600 leading-relaxed mb-3 line-clamp-3 overflow-hidden break-words">
-                        {stripHtml(project.description)}
-                      </p>
-                    </div>
+                      <div>
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                          {project.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="bg-slate-100 text-slate-600 text-[11px] font-semibold px-2.5 py-0.5 rounded"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
 
-                    <div>
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="bg-slate-100 text-slate-600 text-[11px] font-semibold px-2.5 py-0.5 rounded"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                        {/* View Details */}
+                        <Link
+                          href={`/products/${project.slug}`}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-[#e63946] hover:text-[#c1121f] transition-all cursor-pointer"
+                        >
+                          View Details <FiArrowRight size={13} />
+                        </Link>
                       </div>
-
-                      {/* View Details */}
-                      <Link
-                        href={`/products/${project.slug}`}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-[#e63946] hover:text-[#c1121f] transition-all cursor-pointer"
-                      >
-                        View Details <FiArrowRight size={13} />
-                      </Link>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Load More Button if projects count > visibleCount */}
           {currentAllProjects.length > visibleCount && (

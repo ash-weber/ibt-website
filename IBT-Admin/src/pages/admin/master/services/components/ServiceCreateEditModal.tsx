@@ -9,6 +9,7 @@ export type ServiceCreateEditFormValues = {
   slug: string
   description: string
   tags: string
+  keyHighlights?: string[]
   imageUrl: string
   projectUrl: string
   categoryType: 'SERVICE' | 'PRODUCT'
@@ -54,6 +55,27 @@ function validate(values: ServiceCreateEditFormValues): FormErrors {
   return errors
 }
 
+function ensureHighlightArray(raw?: any): string[] {
+  if (Array.isArray(raw)) {
+    return [
+      typeof raw[0] === 'string' ? raw[0] : '',
+      typeof raw[1] === 'string' ? raw[1] : '',
+      typeof raw[2] === 'string' ? raw[2] : '',
+      typeof raw[3] === 'string' ? raw[3] : '',
+    ]
+  }
+  if (typeof raw === 'string' && raw.trim()) {
+    const parts = raw.split(/,|\n/).map((s) => s.trim()).filter(Boolean)
+    return [
+      parts[0] || '',
+      parts[1] || '',
+      parts[2] || '',
+      parts[3] || '',
+    ]
+  }
+  return ['', '', '', '']
+}
+
 export function ServiceCreateEditModal({
   isOpen,
   mode,
@@ -63,7 +85,10 @@ export function ServiceCreateEditModal({
   onClose,
   onSubmit,
 }: ServiceCreateEditModalProps) {
-  const [values, setValues] = useState<ServiceCreateEditFormValues>(initialValues)
+  const [values, setValues] = useState<ServiceCreateEditFormValues>(() => ({
+    ...initialValues,
+    keyHighlights: ensureHighlightArray(initialValues?.keyHighlights),
+  }))
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<FormErrors>({})
   const containerRef = useRef<HTMLDivElement>(null)
@@ -75,7 +100,10 @@ export function ServiceCreateEditModal({
       return
     }
 
-    setValues(initialValues)
+    setValues({
+      ...initialValues,
+      keyHighlights: ensureHighlightArray(initialValues?.keyHighlights),
+    })
     setSelectedImageFile(null)
     setErrors({})
   }, [initialValues, isOpen])
@@ -106,8 +134,21 @@ export function ServiceCreateEditModal({
   const handleSubmit = () => {
     const finalTitle = values.title.trim()
     const finalSlug = values.slug.trim() || slugify(finalTitle) || 'item-' + Date.now()
-    const finalDesc = values.description.trim() || `${finalTitle} - ${values.categoryType === 'PRODUCT' ? 'Product' : 'Service'} built by I-BACUS TECH.`
+    let finalDesc = values.description.trim() || `${finalTitle} - ${values.categoryType === 'PRODUCT' ? 'Product' : 'Service'} built by I-BACUS TECH.`
     const finalImage = values.imageUrl.trim() || (selectedImageFile ? '' : DEFAULT_IMAGE_URL)
+
+    if (values.keyHighlights && Array.isArray(values.keyHighlights)) {
+      const items = values.keyHighlights
+        .map((s) => (typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim() : ''))
+        .filter(Boolean)
+        .slice(0, 4)
+
+      if (items.length > 0) {
+        const cleanBaseDesc = finalDesc.replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '').trim()
+        const listHtml = `<ul class="custom-key-highlights">${items.map((it) => `<li>${it}</li>`).join('')}</ul>`
+        finalDesc = cleanBaseDesc ? `${cleanBaseDesc}\n${listHtml}` : listHtml
+      }
+    }
 
     const finalValues: ServiceCreateEditFormValues = {
       ...values,
@@ -228,6 +269,65 @@ export function ServiceCreateEditModal({
           onChange={(event) => setFieldValue('tags', event.target.value)}
           helperText="Comma separated tech tags (e.g. React, Python, AI)"
         />
+
+        {/* 4 Separate Key Highlights Fields */}
+        {(() => {
+          const highlightArr = ensureHighlightArray(values.keyHighlights)
+          return (
+            <div className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Key Highlights & Features (4 Separate Fields)
+                </span>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Customize each highlight phrase below. These are displayed with checkmarks on the detail card.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Input
+                  label="Highlight 1"
+                  placeholder="e.g. Empower people with skills"
+                  value={highlightArr[0]}
+                  onChange={(e) => {
+                    const updated = [...highlightArr]
+                    updated[0] = e.target.value
+                    setFieldValue('keyHighlights', updated)
+                  }}
+                />
+                <Input
+                  label="Highlight 2"
+                  placeholder="e.g. Practical guidance on goals"
+                  value={highlightArr[1]}
+                  onChange={(e) => {
+                    const updated = [...highlightArr]
+                    updated[1] = e.target.value
+                    setFieldValue('keyHighlights', updated)
+                  }}
+                />
+                <Input
+                  label="Highlight 3"
+                  placeholder="e.g. Foundation of personal success"
+                  value={highlightArr[2]}
+                  onChange={(e) => {
+                    const updated = [...highlightArr]
+                    updated[2] = e.target.value
+                    setFieldValue('keyHighlights', updated)
+                  }}
+                />
+                <Input
+                  label="Highlight 4"
+                  placeholder="e.g. Collaborative Team Management"
+                  value={highlightArr[3]}
+                  onChange={(e) => {
+                    const updated = [...highlightArr]
+                    updated[3] = e.target.value
+                    setFieldValue('keyHighlights', updated)
+                  }}
+                />
+              </div>
+            </div>
+          )
+        })()}
 
         <RichTextEditor
           label="Description (Optional)"

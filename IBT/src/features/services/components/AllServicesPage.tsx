@@ -174,42 +174,7 @@ export function AllServicesPage() {
   const processTitle = settings?.servicesProcessTitle || "How We Deliver Excellence";
   const processBadge = settings?.servicesProcessBadge || "HOW WE DELIVER";
 
-  const fallbackServices = [
-    {
-      id: "1",
-      title: "Analytics Dashboard",
-      slug: "analytics-dashboard",
-      tags: ["Web Application"],
-      imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    },
-    {
-      id: "2",
-      title: "Edu LMS Platform",
-      slug: "edu-lms-platform",
-      tags: ["Web Application"],
-      imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    },
-    {
-      id: "3",
-      title: "ThreatShield AI",
-      slug: "threatshield-ai",
-      tags: ["AI / ML Solution"],
-      imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    },
-    {
-      id: "4",
-      title: "Smart Inventory System",
-      slug: "smart-inventory-system",
-      tags: ["IoT Solution"],
-      imageUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    }
-  ] as PublicService[];
-
-  const displayServices = services.length > 0 ? services : fallbackServices;
+  const displayServices = services;
 
   // Carousel logic for All Services offerings grid
   const [allServicesCarouselIndex, setAllServicesCarouselIndex] = useState(0);
@@ -424,109 +389,120 @@ export function AllServicesPage() {
             </div>
           </div>
 
-          <div className="relative px-8 sm:px-12 lg:px-16">
-            {/* Arrows */}
-            {displayServices.length > allServicesVisibleCount && (
-              <>
-                <button
-                  onClick={showPrevAllServices}
-                  disabled={allServicesCarouselIndex <= 0}
-                  className={`absolute top-[40%] -translate-y-1/2 -left-2 sm:left-0 lg:left-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex <= 0 ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                >
-                  <FiChevronLeft />
-                </button>
-                <button
-                  onClick={showNextAllServices}
-                  disabled={allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount}
-                  className={`absolute top-[40%] -translate-y-1/2 -right-2 sm:right-0 lg:right-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                >
-                  <FiChevronRight />
-                </button>
-              </>
-            )}
+          {/* Services Loading, Empty, or Carousel Track */}
+          {loading ? (
+            <div className="py-20 flex flex-col items-center justify-center gap-3">
+              <Loader size="lg" label="Loading services..." />
+            </div>
+          ) : displayServices.length === 0 ? (
+            <div className="py-16 text-center text-slate-500 font-semibold border border-dashed border-slate-200 rounded-2xl">
+              No services available at the moment.
+            </div>
+          ) : (
+            <div className="relative px-8 sm:px-12 lg:px-16">
+              {/* Arrows */}
+              {displayServices.length > allServicesVisibleCount && (
+                <>
+                  <button
+                    onClick={showPrevAllServices}
+                    disabled={allServicesCarouselIndex <= 0}
+                    className={`absolute top-[40%] -translate-y-1/2 -left-2 sm:left-0 lg:left-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex <= 0 ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
+                      }`}
+                  >
+                    <FiChevronLeft />
+                  </button>
+                  <button
+                    onClick={showNextAllServices}
+                    disabled={allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount}
+                    className={`absolute top-[40%] -translate-y-1/2 -right-2 sm:right-0 lg:right-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
+                      }`}
+                  >
+                    <FiChevronRight />
+                  </button>
+                </>
+              )}
 
-            {/* Carousel Track */}
-            <div className="overflow-hidden py-4 -my-4">
-              <motion.div
-                className="flex transition-transform duration-500 ease-out"
-                style={{
-                  width: `${(displayServices.length * 100) / allServicesVisibleCount}%`,
-                  transform: `translateX(-${(allServicesCarouselIndex * 100) / displayServices.length}%)`,
-                }}
-              >
-                {displayServices.map((service, idx) => {
-                  const cardColors = [
-                    { bg: 'bg-blue-50', text: 'text-blue-600', hoverBg: 'hover:border-blue-200' },
-                    { bg: 'bg-rose-50', text: 'text-rose-500', hoverBg: 'hover:border-rose-200' },
-                    { bg: 'bg-emerald-50', text: 'text-emerald-500', hoverBg: 'hover:border-emerald-200' },
-                    { bg: 'bg-purple-50', text: 'text-[#9333ea]', hoverBg: 'hover:border-purple-200' },
-                    { bg: 'bg-orange-50', text: 'text-orange-500', hoverBg: 'hover:border-orange-200' },
-                    { bg: 'bg-sky-50', text: 'text-sky-500', hoverBg: 'hover:border-sky-200' },
-                  ];
-                  const colorSet = cardColors[idx % cardColors.length];
+              {/* Carousel Track */}
+              <div className="overflow-hidden py-4 -my-4">
+                <motion.div
+                  className="flex transition-transform duration-500 ease-out"
+                  style={{
+                    width: `${(displayServices.length * 100) / allServicesVisibleCount}%`,
+                    transform: `translateX(-${(allServicesCarouselIndex * 100) / displayServices.length}%)`,
+                  }}
+                >
+                  {displayServices.map((service, idx) => {
+                    const cardColors = [
+                      { bg: 'bg-blue-50', text: 'text-blue-600', hoverBg: 'hover:border-blue-200' },
+                      { bg: 'bg-rose-50', text: 'text-rose-500', hoverBg: 'hover:border-rose-200' },
+                      { bg: 'bg-emerald-50', text: 'text-emerald-500', hoverBg: 'hover:border-emerald-200' },
+                      { bg: 'bg-purple-50', text: 'text-[#9333ea]', hoverBg: 'hover:border-purple-200' },
+                      { bg: 'bg-orange-50', text: 'text-orange-500', hoverBg: 'hover:border-orange-200' },
+                      { bg: 'bg-sky-50', text: 'text-sky-500', hoverBg: 'hover:border-sky-200' },
+                    ];
+                    const colorSet = cardColors[idx % cardColors.length];
 
-                  return (
-                    <div
-                      key={service.id || idx}
-                      className="px-3 text-left"
-                      style={{ flex: `0 0 ${100 / displayServices.length}%` }}
-                    >
-                      <Link
-                        href={`/services/${service.slug}`}
-                        className="group block h-full"
+                    return (
+                      <div
+                        key={service.id || idx}
+                        className="px-3 text-left"
+                        style={{ flex: `0 0 ${100 / displayServices.length}%` }}
                       >
-                        <div className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white border border-slate-100 p-8 text-left hover:shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-1 ${colorSet.hoverBg}`}>
+                        <Link
+                          href={`/services/${service.slug}`}
+                          className="group block h-full"
+                        >
+                          <div className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white border border-slate-100 p-8 text-left hover:shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-1 ${colorSet.hoverBg}`}>
 
-                          {/* Visual container (Image or styled icon placeholder) */}
-                          <div className="relative overflow-hidden rounded-xl mb-6 aspect-video bg-slate-50 border border-slate-100/50 flex items-center justify-center">
-                            {service.imageUrl ? (
-                              <img
-                                src={resolveImageUrl(service.imageUrl)}
-                                alt={service.title}
-                                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
-                              />
-                            ) : (
-                              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${colorSet.bg} ${colorSet.text}`}>
-                                <FiBriefcase size={28} />
+                            {/* Visual container (Image or styled icon placeholder) */}
+                            <div className="relative overflow-hidden rounded-xl mb-6 aspect-video bg-slate-50 border border-slate-100/50 flex items-center justify-center">
+                              {service.imageUrl ? (
+                                <img
+                                  src={resolveImageUrl(service.imageUrl)}
+                                  alt={service.title}
+                                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                                />
+                              ) : (
+                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${colorSet.bg} ${colorSet.text}`}>
+                                  <FiBriefcase size={28} />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Tags */}
+                            {service.tags && service.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                {service.tags.map((tag, tagIdx) => (
+                                  <span
+                                    key={tagIdx}
+                                    className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${colorSet.bg} ${colorSet.text}`}
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
                               </div>
                             )}
-                          </div>
 
-                          {/* Tags */}
-                          {service.tags && service.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {service.tags.map((tag, tagIdx) => (
-                                <span
-                                  key={tagIdx}
-                                  className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${colorSet.bg} ${colorSet.text}`}
-                                >
-                                  {tag}
-                                </span>
-                              ))}
+                            <h3 className="text-xl font-bold text-[#0f172a] mb-3 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
+                              {service.title}
+                            </h3>
+
+                            <p className="text-[13px] leading-relaxed text-slate-500 mb-6 flex-1 line-clamp-3">
+                              {stripHtml(service.description) || "Customized technology solutions designed to streamline operations and enhance productivity."}
+                            </p>
+
+                            <div className={`mt-auto flex items-center gap-1.5 text-sm font-bold ${colorSet.text}`}>
+                              Learn More <FiArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
                             </div>
-                          )}
-
-                          <h3 className="text-xl font-bold text-[#0f172a] mb-3 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
-                            {service.title}
-                          </h3>
-
-                          <p className="text-[13px] leading-relaxed text-slate-500 mb-6 flex-1 line-clamp-3">
-                            {stripHtml(service.description) || "Customized technology solutions designed to streamline operations and enhance productivity."}
-                          </p>
-
-                          <div className={`mt-auto flex items-center gap-1.5 text-sm font-bold ${colorSet.text}`}>
-                            Learn More <FiArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
                           </div>
-                        </div>
-                      </Link>
-                    </div>
-                  );
-                })}
-              </motion.div>
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </motion.div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
