@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { FiArrowLeft, FiCheckCircle, FiGlobe, FiZap, FiArrowRight, FiShield, FiClock, FiUsers, FiExternalLink } from 'react-icons/fi';
 import { apiClient } from '@/src/api/client';
+import { KeyHighlights } from '@/src/shared/ui/KeyHighlights';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,12 +70,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   let category = serviceItem?.categoryType || 'Product';
   let tags = serviceItem?.tags || [];
   let imageSrc = resolveImageUrl(serviceItem?.imageUrl);
-  let features = [
-    'High performance scalable architecture',
-    'Custom user workflows & analytics',
-    'Integrated security & cloud APIs',
-    'Realtime dashboard reporting'
-  ];
+  let features: string[] | undefined = undefined;
 
   // If not found in API, check fallback mock data
   if (!serviceItem && fallbackProducts[slug.toLowerCase()]) {
@@ -91,20 +87,20 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   return (
     <div className="min-h-screen bg-white text-slate-800 font-sans antialiased py-12">
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
-        
+
         {/* Back Link */}
         <div className="mb-8">
           <Link
             href="/products"
             className="group inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition-colors hover:text-[#e63946]"
           >
-            <FiArrowLeft className="transition-transform group-hover:-translate-x-1" /> Back to Products
+            <FiArrowLeft className="transition-transform group-hover:-translate-x-1" /> All Products
           </Link>
         </div>
 
         {/* Product Detail Card */}
         <article className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl">
-          
+
           {/* Header Image / Media Frame */}
           <div className="relative aspect-[16/8] w-full bg-slate-50 flex items-center justify-center p-6 border-b border-slate-100">
             {imageSrc ? (
@@ -123,7 +119,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
           {/* Body Content */}
           <div className="p-8 sm:p-12 space-y-8">
-            
+
             {/* Title & Category Badge */}
             <div>
               <span className="inline-block bg-rose-50 text-[#e63946] text-xs font-extrabold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
@@ -158,25 +154,18 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 Overview & Architecture
               </h2>
               <div
-                className="text-base sm:text-lg leading-relaxed text-slate-600 prose prose-slate max-w-none"
-                dangerouslySetInnerHTML={{ __html: description || '' }}
+                className="text-base sm:text-lg leading-relaxed text-slate-600 prose prose-slate max-w-none break-words [overflow-wrap:anywhere] max-w-full overflow-hidden"
+                dangerouslySetInnerHTML={{ __html: description ? description.replace(/&nbsp;/gi, ' ').replace(/\u00a0/g, ' ') : '' }}
               />
             </div>
 
             {/* Key Features */}
-            <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">
-                Key Highlights & Features
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {features.map((feat) => (
-                  <div key={feat} className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <FiCheckCircle size={18} className="text-emerald-500 shrink-0" />
-                    <span className="text-sm font-bold text-slate-800">{feat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <KeyHighlights
+              description={description}
+              cardTitle={title}
+              tags={tags}
+              features={features}
+            />
 
             {/* Tech Stack */}
             {tags.length > 0 && (

@@ -107,11 +107,7 @@ export function ServiceMasterCard({
           <span className={service.categoryType === 'PRODUCT' ? 'rounded bg-purple-100 text-purple-700 px-2 py-0.5 font-bold text-[10px]' : 'rounded bg-blue-100 text-blue-700 px-2 py-0.5 font-bold text-[10px]'}>
             {service.categoryType === 'PRODUCT' ? 'PRODUCT' : 'SERVICE'}
           </span>
-          {service.categoryType === 'PRODUCT' && service.isFeatured && (
-            <span className="rounded bg-amber-100 text-amber-800 px-2 py-0.5 font-bold text-[10px]">
-              ⭐ FEATURED
-            </span>
-          )}
+
           <span className="rounded bg-[var(--ui-surface-muted)] px-1.5 py-0.5 font-mono">
             /{service.slug}
           </span>

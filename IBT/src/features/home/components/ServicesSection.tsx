@@ -10,6 +10,20 @@ import { resolveImageUrl } from '@/src/utils/image';
 
 import { useSocketSettings } from '@/src/providers/SocketSettingsProvider';
 
+function stripHtml(raw?: string | null): string {
+  if (!raw) return '';
+  return raw
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
@@ -254,7 +268,7 @@ export function ServicesSection() {
                             </h3>
 
                             <p className="text-[11px] leading-relaxed text-slate-500 mb-6 flex-1 pr-2 line-clamp-4">
-                              {service.description || "Customized solutions to optimize operations and accelerate your business."}
+                              {stripHtml(service.description) || "Customized solutions to optimize operations and accelerate your business."}
                             </p>
 
                             <div className={`mt-auto flex items-center gap-1.5 text-[11px] font-bold ${colorSet.text}`}>

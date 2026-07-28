@@ -5,6 +5,22 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 import { apiClient, type PublicService } from '@/src/api/client';
+import { ActionButton } from '@/src/shared/ui/ActionButton';
+
+function stripHtml(raw?: string | null): string {
+  if (!raw) return '';
+  return raw
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 import { Loader, SiteButton } from '@/src/shared/ui';
 import { useSocketSettings } from '@/src/providers/SocketSettingsProvider';
 import { resolveImageUrl } from '@/src/utils/image';
@@ -497,7 +513,7 @@ export function AllServicesPage() {
                           </h3>
 
                           <p className="text-[13px] leading-relaxed text-slate-500 mb-6 flex-1 line-clamp-3">
-                            {service.description || "Customized technology solutions designed to streamline operations and enhance productivity."}
+                            {stripHtml(service.description) || "Customized technology solutions designed to streamline operations and enhance productivity."}
                           </p>
 
                           <div className={`mt-auto flex items-center gap-1.5 text-sm font-bold ${colorSet.text}`}>

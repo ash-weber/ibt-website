@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { ActionButton, Input, Modal } from '../../../../../component'
+import { useEffect, useRef, useState } from 'react'
+import { ActionButton, Input, Modal, RichTextEditor } from '../../../../../component'
 import { ImageUploadField } from '../../../components/ImageUploadField'
 
 type Mode = 'create' | 'edit'
@@ -101,13 +101,7 @@ export function ServiceCreateEditModal({
     }))
   }
 
-  const descriptionErrorClass = useMemo(
-    () =>
-      errors.description
-        ? 'w-full resize-y rounded-lg border border-[var(--ui-danger)] bg-white px-3 py-2.5 text-sm text-[var(--ui-text)] outline-none transition-colors placeholder:text-[var(--ui-muted)] focus:border-[var(--ui-danger)]'
-        : 'w-full resize-y rounded-lg border border-[var(--ui-border)] bg-white px-3 py-2.5 text-sm text-[var(--ui-text)] outline-none transition-colors placeholder:text-[var(--ui-muted)] focus:border-[var(--ui-primary)]',
-    [errors.description],
-  )
+
 
   const handleSubmit = () => {
     const finalTitle = values.title.trim()
@@ -180,20 +174,6 @@ export function ServiceCreateEditModal({
           </select>
         </label>
 
-        {/* Conditional Featured Project Field if Product */}
-        {values.categoryType === 'PRODUCT' && (
-          <label className="grid gap-1.5 bg-rose-50/50 p-3 rounded-lg border border-rose-100">
-            <span className="text-sm font-semibold text-[var(--ui-text)]">Featured Project on Products Page?</span>
-            <select
-              value={values.isFeatured ? 'YES' : 'NO'}
-              onChange={(e) => setFieldValue('isFeatured', e.target.value === 'YES')}
-              className="w-full rounded-lg border border-[var(--ui-border)] bg-white px-3 py-2 text-sm text-[var(--ui-text)] outline-none transition-colors focus:border-[var(--ui-primary)]"
-            >
-              <option value="NO">No (Appears under All Projects grid)</option>
-              <option value="YES">Yes (Appears in Featured Projects showcase at the top)</option>
-            </select>
-          </label>
-        )}
 
         <Input
           label="Title *"
@@ -221,17 +201,6 @@ export function ServiceCreateEditModal({
           helperText="If provided, this link will be displayed on the product details page."
         />
 
-        <label className="grid gap-1.5">
-          <span className="text-sm font-semibold text-[var(--ui-text)]">Description (Optional)</span>
-          <textarea
-            value={values.description}
-            rows={4}
-            placeholder={values.categoryType === 'PRODUCT' ? 'Product / Project description...' : 'Service description...'}
-            onChange={(event) => setFieldValue('description', event.target.value)}
-            className={descriptionErrorClass}
-          />
-        </label>
-
         <div>
           <ImageUploadField
             label="Image (Optional)"
@@ -258,6 +227,15 @@ export function ServiceCreateEditModal({
           value={values.tags}
           onChange={(event) => setFieldValue('tags', event.target.value)}
           helperText="Comma separated tech tags (e.g. React, Python, AI)"
+        />
+
+        <RichTextEditor
+          label="Description (Optional)"
+          value={values.description}
+          placeholder={values.categoryType === 'PRODUCT' ? 'Product / Project description...' : 'Service description...'}
+          onChange={(val) => setFieldValue('description', val)}
+          error={errors.description}
+          minHeight={180}
         />
       </div>
     </Modal>

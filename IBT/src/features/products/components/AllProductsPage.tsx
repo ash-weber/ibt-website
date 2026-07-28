@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiClient, type PublicService } from '@/src/api/client';
 import { resolveImageUrl } from '@/src/utils/image';
+import { generateKeyHighlights } from '@/src/utils/highlights';
 import {
   FiArrowRight,
   FiBriefcase,
@@ -31,6 +32,20 @@ import {
   FiTruck,
   FiRefreshCw
 } from 'react-icons/fi';
+
+function stripHtml(raw?: string | null): string {
+  if (!raw) return '';
+  return raw
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 // Custom Tech Brand SVG Icons for 100% render reliability
 function ReactIcon({ size = 20 }: { size?: number }) {
@@ -136,8 +151,9 @@ export interface ProductProject {
   features: string[];
 }
 
-// Data definition matching attached image exactly
-const featuredProjects: ProductProject[] = [
+
+
+const allProjects: ProductProject[] = [
   {
     id: 'bloomcraft',
     slug: 'bloomcraft',
@@ -149,7 +165,6 @@ const featuredProjects: ProductProject[] = [
     icon: FiZap,
     iconColor: 'text-rose-500',
     iconBg: 'bg-rose-50',
-    featured: true,
     mockupType: 'bloomcraft',
     features: ['AI Goal Assessment Engine', 'Personalized Growth Roadmaps', 'Habit Tracking Analytics', 'Interactive Progress Dashboard']
   },
@@ -164,7 +179,6 @@ const featuredProjects: ProductProject[] = [
     icon: FiGlobe,
     iconColor: 'text-sky-600',
     iconBg: 'bg-sky-50',
-    featured: true,
     mockupType: 'ibtwebsite',
     features: ['Server-Side Rendered Next.js 16', 'Realtime Socket Updates', 'Custom CMS Integration', 'SEO Optimized Architecture']
   },
@@ -179,13 +193,9 @@ const featuredProjects: ProductProject[] = [
     icon: FiBriefcase,
     iconColor: 'text-indigo-600',
     iconBg: 'bg-indigo-50',
-    featured: true,
     mockupType: 'careersheet',
     features: ['Automated ATS Resume Analyzer', 'Job Application Pipeline', 'Recruiter Dashboard', 'Real-time Chat System']
-  }
-];
-
-const allProjects: ProductProject[] = [
+  },
   {
     id: 'ai-interview',
     slug: 'ai-interview',
@@ -508,12 +518,7 @@ export function AllProductsPage() {
             featured: Boolean(item.isFeatured),
             imageUrl: item.imageUrl || null,
             mockupType: mockupTypes[idx % mockupTypes.length],
-            features: [
-              'High performance scalable architecture',
-              'Custom user workflows & analytics',
-              'Integrated security & cloud APIs',
-              'Realtime dashboard reporting'
-            ]
+            features: generateKeyHighlights(item.description, item.title, item.tags)
           }));
 
           setDynamicProducts(mapped);
@@ -528,19 +533,13 @@ export function AllProductsPage() {
     fetchProducts();
   }, []);
 
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(100);
 
   // Determine displayed projects
   const hasDynamic = dynamicProducts.length > 0;
   const currentAllProjects = hasDynamic ? dynamicProducts : allProjects;
   const displayedAllProjects = currentAllProjects.slice(0, visibleCount);
-  const allFeaturedProjects = hasDynamic
-    ? (dynamicProducts.filter((p) => p.featured).length > 0
-        ? dynamicProducts.filter((p) => p.featured)
-        : dynamicProducts)
-    : featuredProjects;
 
-  const currentFeaturedProjects = allFeaturedProjects.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-white text-slate-800 font-sans antialiased">
@@ -573,10 +572,10 @@ export function AllProductsPage() {
               {/* Action Buttons */}
               <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full">
                 <a
-                  href="#featured-projects"
+                  href="#all-projects"
                   className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[#e63946] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-[#c1121f]"
                 >
-                  Explore Projects <FiArrowRight size={16} />
+                  View All Products <FiArrowRight size={16} />
                 </a>
 
                 <Link
@@ -662,89 +661,7 @@ export function AllProductsPage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          2. FEATURED PROJECTS SECTION
-      ========================================================================= */}
-      <section id="featured-projects" className="py-16 bg-slate-50/60 border-t border-b border-slate-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          
-          {/* Header */}
-          <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <span className="text-[13px] font-extrabold uppercase tracking-[0.2em] text-[#e63946]">
-                FEATURED PROJECTS
-              </span>
-            </div>
-            {allFeaturedProjects.length > 3 && (
-              <a
-                href="#all-projects"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f172a] hover:text-[#e63946] transition-colors"
-              >
-                View All Projects <FiArrowRight size={15} className="text-[#e63946]" />
-              </a>
-            )}
-          </div>
 
-          {/* 3 Grid Showcase Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {currentFeaturedProjects.map((project) => {
-              const IconComp = project.icon;
-              return (
-                <div
-                  key={project.id}
-                  className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between"
-                >
-                  {/* Card Header Device Preview */}
-                  <div className="p-3 bg-slate-100/70 border-b border-slate-100">
-                    <DeviceMockupFrame type={project.mockupType} title={project.title} imageUrl={project.imageUrl} />
-                  </div>
-
-                  {/* Card Content Body */}
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      {/* Icon & Title */}
-                      <div className="flex items-center gap-3 mb-2.5">
-                        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${project.iconBg} ${project.iconColor}`}>
-                          <IconComp size={18} />
-                        </div>
-                        <h3 className="text-lg font-bold text-[#0f172a] line-clamp-1">{project.title}</h3>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4 line-clamp-3 overflow-hidden break-words">
-                        {project.description}
-                      </p>
-                    </div>
-
-                    <div>
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="bg-slate-100 text-slate-600 text-xs font-semibold px-3 py-1 rounded-md"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* View Details Link */}
-                      <Link
-                        href={`/products/${project.slug}`}
-                        className="inline-flex items-center gap-1.5 text-sm font-bold text-[#e63946] hover:text-[#c1121f] group-hover:gap-2.5 transition-all cursor-pointer"
-                      >
-                        View Details <FiArrowRight size={15} />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-        </div>
-      </section>
 
       {/* =========================================================================
           3. ALL PROJECTS SECTION
@@ -786,7 +703,7 @@ export function AllProductsPage() {
 
                       {/* Description */}
                       <p className="text-xs text-slate-600 leading-relaxed mb-3 line-clamp-3 overflow-hidden break-words">
-                        {project.description}
+                        {stripHtml(project.description)}
                       </p>
                     </div>
 

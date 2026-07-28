@@ -271,7 +271,7 @@ export function ServicesMasterPage() {
           Reorder Services
         </ActionButton>
         <ActionButton size="sm" intent="primary" leftIcon={<FiPlus />} onClick={openCreateModal}>
-          Add Service
+          Add Service / Product
         </ActionButton>
       </div>
 
