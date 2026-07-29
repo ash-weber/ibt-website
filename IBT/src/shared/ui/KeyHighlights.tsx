@@ -30,10 +30,10 @@ export function KeyHighlights({
         {items.map((feat, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-3.5 bg-slate-50/90 p-4 sm:p-4.5 rounded-2xl border border-slate-100/90 shadow-2xs hover:border-emerald-200 transition-colors min-w-0 overflow-hidden"
+            className="flex items-start gap-3 bg-slate-50/90 p-3.5 sm:p-4 rounded-2xl border border-slate-100/90 shadow-2xs hover:border-emerald-200 transition-colors min-w-0"
           >
-            <FiCheckCircle size={20} className="text-emerald-500 shrink-0" />
-            <span className="text-sm font-bold text-slate-800 truncate" title={feat}>
+            <FiCheckCircle size={20} className="text-emerald-500 shrink-0 mt-0.5" />
+            <span className="text-sm font-bold text-slate-800 break-words whitespace-normal leading-snug" title={feat}>
               {feat}
             </span>
           </div>

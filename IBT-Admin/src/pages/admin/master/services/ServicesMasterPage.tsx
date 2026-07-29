@@ -174,8 +174,39 @@ function generateKeyHighlights(
   return highlights.slice(0, 4)
 }
 
+export function extractCleanDescription(rawDesc?: string | null): string {
+  if (!rawDesc) return ''
+  return rawDesc
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
+    .replace(/<ul[^>]*>([\s\S]*?)<\/ul>\s*$/gi, '')
+    .trim()
+}
+
+export function extractKeyHighlightsFromHtml(rawDesc?: string | null): string[] {
+  if (!rawDesc) return []
+  const match = rawDesc.match(/<ul class="custom-key-highlights"[^>]*>([\s\S]*?)<\/ul>/i) ||
+                rawDesc.match(/<ul[^>]*>([\s\S]*?)<\/ul>\s*$/i)
+  if (match && match[1]) {
+    const liMatches = match[1].match(/<li[^>]*>(.*?)<\/li>/gi)
+    if (liMatches && liMatches.length > 0) {
+      return liMatches
+        .map((item) =>
+          item
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/gi, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+        )
+        .filter(Boolean)
+    }
+  }
+  return []
+}
+
 function mapItemToForm(item: ServiceMasterItem): ServiceCreateEditFormValues {
-  const generatedHighlights = generateKeyHighlights(item.description, item.title, item.tags)
+  const cleanDesc = extractCleanDescription(item.description)
+  const extracted = extractKeyHighlightsFromHtml(item.description)
+  const generatedHighlights = extracted.length > 0 ? extracted : generateKeyHighlights(cleanDesc, item.title, item.tags)
   const keyHighlights = [
     generatedHighlights[0] || '',
     generatedHighlights[1] || '',
@@ -185,7 +216,7 @@ function mapItemToForm(item: ServiceMasterItem): ServiceCreateEditFormValues {
   return {
     title: item.title,
     slug: item.slug,
-    description: item.description,
+    description: cleanDesc,
     tags: item.tags.join(', '),
     keyHighlights,
     imageUrl: item.imageUrl,
@@ -324,7 +355,7 @@ export function ServicesMasterPage() {
         description: values.description.trim(),
         imageUrl,
         tags: parseTags(values.tags),
-        projectUrl: values.projectUrl?.trim() || undefined,
+        projectUrl: values.projectUrl?.trim() ? values.projectUrl.trim() : null,
         categoryType: values.categoryType,
         isFeatured: values.isFeatured,
       }

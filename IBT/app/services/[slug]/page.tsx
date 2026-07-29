@@ -38,6 +38,16 @@ const resolveImageUrl = (imageUrl?: string | null) => {
   return `${resolveApiOrigin(process.env.NEXT_PUBLIC_API_URL)}${imageUrl}`
 }
 
+function getCleanDescriptionHtml(rawDesc?: string | null): string {
+  if (!rawDesc) return ''
+  return rawDesc
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
+    .replace(/<ul[^>]*>([\s\S]*?)<\/ul>\s*$/gi, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\u00a0/g, ' ')
+    .trim()
+}
+
 export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const { slug } = await params
   const service = await apiClient.getServiceBySlug(slug).catch(() => null)
@@ -59,15 +69,15 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
         </Link>
       </div>
 
-      <article className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_14px_36px_rgba(35,24,21,0.06)]">
-        <div className="relative aspect-[16/7] w-full bg-slate-50 flex items-center justify-center p-6 border-b border-slate-100">
+      <article className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_14px_36px_rgba(35,24,21,0.06)] [isolation:isolate]">
+        <div className="relative w-full max-h-[340px] sm:max-h-[380px] min-h-[220px] bg-slate-50 flex items-center justify-center p-6 border-b border-slate-100 overflow-hidden rounded-t-3xl">
           {imageSrc ? (
             service.projectUrl ? (
-              <a href={service.projectUrl} target="_blank" rel="noopener noreferrer" className="block max-h-full max-w-full">
-                <img src={imageSrc} alt={service.title} className="max-h-full max-w-full object-contain hover:opacity-90 transition-opacity" />
+              <a href={service.projectUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center max-h-[280px] sm:max-h-[320px] max-w-full">
+                <img src={imageSrc} alt={service.title} className="max-h-[260px] sm:max-h-[300px] w-auto h-auto object-contain rounded-xl drop-shadow-md hover:opacity-90 transition-opacity" />
               </a>
             ) : (
-              <img src={imageSrc} alt={service.title} className="max-h-full max-w-full object-contain" />
+              <img src={imageSrc} alt={service.title} className="max-h-[260px] sm:max-h-[300px] w-auto h-auto object-contain rounded-xl drop-shadow-md" />
             )
           ) : (
             <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-slate-400">
@@ -83,8 +93,8 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
           </div>
 
           <div 
-            className="text-base leading-8 text-slate-600 prose prose-slate max-w-none break-words [overflow-wrap:anywhere] max-w-full overflow-hidden"
-            dangerouslySetInnerHTML={{ __html: service.description ? service.description.replace(/&nbsp;/gi, ' ').replace(/\u00a0/g, ' ') : '' }}
+            className="text-base leading-8 text-slate-600 prose prose-slate max-w-none break-words [overflow-wrap:anywhere] max-w-full overflow-hidden text-justify"
+            dangerouslySetInnerHTML={{ __html: getCleanDescriptionHtml(service.description) }}
           />
 
           {/* Key Highlights & Features */}

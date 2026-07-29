@@ -17,6 +17,21 @@ type ServiceMasterCardProps = {
   onViewDetails?: (item: ServiceMasterItem) => void
 }
 
+function stripHtml(raw?: string | null): string {
+  if (!raw) return ''
+  return raw
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export function ServiceMasterCard({
   service,
   mode,
@@ -116,8 +131,8 @@ export function ServiceMasterCard({
         </div>
 
         {/* Description */}
-        <p className="mt-2 hidden sm:-webkit-box sm:line-clamp-2 text-sm leading-relaxed text-[var(--ui-text)] opacity-80">
-          {service.description}
+        <p className="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-[var(--ui-text)] opacity-80">
+          {stripHtml(service.description)}
         </p>
 
         {/* Tags */}

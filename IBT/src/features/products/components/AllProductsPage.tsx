@@ -37,6 +37,7 @@ import {
 function stripHtml(raw?: string | null): string {
   if (!raw) return '';
   return raw
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
@@ -388,7 +389,7 @@ export function AllProductsPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-800 font-sans antialiased">
-      
+
       {/* =========================================================================
           1. HERO SECTION ("OUR PROJECTS")
       ========================================================================= */}
@@ -398,19 +399,19 @@ export function AllProductsPage() {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-12">
-            
+
             {/* Left Content Column */}
             <div className="lg:col-span-6 text-left">
-              <span className="text-[13px] font-extrabold uppercase tracking-[0.2em] text-[#e63946]">
-                OUR PROJECTS
+              <span className="text-[18px] font-bold uppercase tracking-[0.2em] text-[#e63946]">
+                OUR PRODUCTS
               </span>
 
               <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#0f172a] leading-[1.15]">
-                Turning Ideas Into <br />
+                Turning Ideas Into <br className="hidden lg:block" />
                 <span className="text-[#e63946]">Real Digital</span> Products
               </h1>
 
-              <p className="mt-6 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+              <p className="mt-6 pt-4 sm:mt-8 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
                 We build scalable web applications, mobile apps, AI solutions and enterprise software that solve real business problems and create real impact.
               </p>
 
@@ -418,14 +419,14 @@ export function AllProductsPage() {
               <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full">
                 <a
                   href="#all-projects"
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[#e63946] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-[#c1121f]"
+                  className="inline-flex w-full sm:w-[210px] h-[52px] items-center justify-center gap-2 rounded-xl bg-[#e63946] px-6 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-[#c1121f]"
                 >
                   View All Products <FiArrowRight size={16} />
                 </a>
 
                 <Link
                   href="/contact-us"
-                  className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#1d3557] shadow-sm transition hover:bg-slate-50"
+                  className="inline-flex w-full sm:w-[210px] h-[52px] items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-sm font-bold text-[#1d3557] shadow-sm transition hover:bg-slate-50"
                 >
                   Contact Us
                 </Link>
@@ -440,63 +441,47 @@ export function AllProductsPage() {
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.6 }}
-                  className="relative w-full flex items-center justify-center p-2"
+                  className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 [isolation:isolate] [transform:translateZ(0)]"
                 >
                   <img
                     src="/images/products-hero-laptop.png"
                     alt="I-BACUS TECH Digital Products Showcase Laptop"
-                    className="w-full h-auto object-contain max-h-[440px] drop-shadow-2xl hover:scale-105 transition-transform duration-700"
+                    className="w-full h-auto block rounded-3xl object-cover hover:scale-105 transition-transform duration-700"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/images/user-hero-laptop.png';
                     }}
                   />
                 </motion.div>
 
-                {/* Floating Metric Card 1: 50+ Projects Delivered */}
+                {/* Floating Metric Card 1: Projects Delivered */}
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="absolute -top-6 -right-4 sm:top-4 sm:-right-8 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-3.5 z-20"
+                  className="absolute -top-4 -left-4 sm:top-4 sm:-left-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-100/80 flex items-center gap-3.5 z-20"
                 >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rose-50 text-[#e63946]">
-                    <FiBriefcase size={22} />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-[#e63946]">
+                    <FiBriefcase size={20} />
                   </div>
                   <div>
-                    <div className="text-xl font-extrabold text-[#0f172a] leading-none">50+</div>
-                    <div className="text-xs font-semibold text-slate-500 mt-1">Projects Delivered</div>
+                    <div className="text-lg font-extrabold text-[#0f172a] leading-none">250+</div>
+                    <div className="text-[11px] font-semibold text-slate-500 mt-1">Projects Delivered</div>
                   </div>
                 </motion.div>
 
-                {/* Floating Metric Card 2: Clients Across Industries */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-3.5 z-20 hidden sm:flex"
-                >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700">
-                    <FiGlobe size={22} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-[#0f172a]">Clients Across</div>
-                    <div className="text-xs font-semibold text-slate-500">Industries</div>
-                  </div>
-                </motion.div>
-
-                {/* Floating Metric Card 3: 98% Client Satisfaction */}
+                {/* Floating Metric Card 2: 95% Client Satisfaction */}
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.6 }}
-                  className="absolute -bottom-6 -right-4 sm:-bottom-6 sm:-right-6 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-3.5 z-20"
+                  className="absolute -bottom-4 -right-4 sm:bottom-4 sm:-right-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-100/80 flex items-center gap-3.5 z-20"
                 >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-                    <FiStar size={22} />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                    <FiStar size={20} />
                   </div>
                   <div>
-                    <div className="text-xl font-extrabold text-[#0f172a] leading-none">98%</div>
-                    <div className="text-xs font-semibold text-slate-500 mt-1">Client Satisfaction</div>
+                    <div className="text-lg font-extrabold text-[#0f172a] leading-none">95%</div>
+                    <div className="text-[11px] font-semibold text-slate-500 mt-1">Client Satisfaction</div>
                   </div>
                 </motion.div>
               </div>
@@ -511,13 +496,13 @@ export function AllProductsPage() {
       {/* =========================================================================
           3. ALL PROJECTS SECTION
       ========================================================================= */}
-      <section id="all-projects" className="py-16 bg-white">
+      <section id="all-projects" className="py-16 bg-white scroll-mt-24 sm:scroll-mt-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {/* Header */}
           <div className="mb-10 text-left">
-            <span className="text-[13px] font-extrabold uppercase tracking-[0.2em] text-[#e63946]">
-              ALL PROJECTS
+            <span className="text-[18px] font-bold uppercase tracking-[0.2em] text-[#e63946]">
+              ALL PRODUCTS
             </span>
           </div>
 
@@ -537,10 +522,10 @@ export function AllProductsPage() {
                 return (
                   <div
                     key={project.id}
-                    className="group bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                    className="group bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between [isolation:isolate]"
                   >
                     {/* Top Preview */}
-                    <div className="p-3 bg-slate-100/60 border-b border-slate-100">
+                    <div className="p-3 bg-slate-100/60 border-b border-slate-100 rounded-t-2xl overflow-hidden">
                       <DeviceMockupFrame type={project.mockupType} title={project.title} imageUrl={project.imageUrl} />
                     </div>
 
@@ -561,26 +546,28 @@ export function AllProductsPage() {
                         </p>
                       </div>
 
-                      <div>
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-1.5 mb-4">
-                          {project.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="bg-slate-100 text-slate-600 text-[11px] font-semibold px-2.5 py-0.5 rounded"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
+                      <div className="mt-auto pt-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          {/* Tags */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {project.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="bg-slate-100 text-slate-600 text-[11px] font-semibold px-2.5 py-0.5 rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
 
-                        {/* View Details */}
-                        <Link
-                          href={`/products/${project.slug}`}
-                          className="inline-flex items-center gap-1 text-xs font-bold text-[#e63946] hover:text-[#c1121f] transition-all cursor-pointer"
-                        >
-                          View Details <FiArrowRight size={13} />
-                        </Link>
+                          {/* View Details */}
+                          <Link
+                            href={`/products/${project.slug}`}
+                            className="inline-flex items-center gap-1 text-xs font-bold text-[#e63946] hover:text-[#c1121f] transition-all cursor-pointer ml-auto"
+                          >
+                            View Details <FiArrowRight size={13} />
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -614,15 +601,15 @@ export function AllProductsPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="bg-slate-50/70 border border-slate-200/80 rounded-3xl p-6 sm:p-10 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              
+
               {/* Left Column */}
               <div className="lg:col-span-4 xl:col-span-3 text-left">
                 <h2 className="text-2xl sm:text-3xl font-black text-[#0f172a] leading-tight">
-                  Let's Build Your Next <br />
+                  Let's Build Your Next <br className="hidden lg:block" />
                   <span className="text-[#e63946]">Successful Product</span>
                 </h2>
 
-                <p className="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                <p className="mt-5 p-4 sm:mt-6 text-xs sm:text-sm text-slate-600 leading-relaxed">
                   We help startups and enterprises turn their ideas into scalable digital products.
                 </p>
 

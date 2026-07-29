@@ -46,7 +46,8 @@ export const createServiceSchema = z.object({
     .string()
     .url("Project URL must be a valid URL")
     .optional()
-    .or(z.literal("")),
+    .or(z.literal(""))
+    .or(z.null()),
   categoryType: z.enum(["SERVICE", "PRODUCT"]).optional(),
   isFeatured: z.boolean().optional(),
   order: z
@@ -81,7 +82,8 @@ export const updateServiceSchema = z
       .string()
       .url("Project URL must be a valid URL")
       .optional()
-      .or(z.literal("")),
+      .or(z.literal(""))
+      .or(z.null()),
     categoryType: z.enum(["SERVICE", "PRODUCT"]).optional(),
     isFeatured: z.boolean().optional(),
     order: z

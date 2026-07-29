@@ -59,6 +59,16 @@ const fallbackProducts: Record<string, {
   },
 };
 
+function getCleanDescriptionHtml(rawDesc?: string | null): string {
+  if (!rawDesc) return '';
+  return rawDesc
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
+    .replace(/<ul[^>]*>([\s\S]*?)<\/ul>\s*$/gi, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\u00a0/g, ' ')
+    .trim();
+}
+
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { slug } = await params;
 
@@ -92,22 +102,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         <div className="mb-8">
           <Link
             href="/products"
-            className="group inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition-colors hover:text-[#e63946]"
+            className="group inline-flex items-center gap-2 text-md font-bold text-slate-600 transition-colors hover:text-[#e63946]"
           >
             <FiArrowLeft className="transition-transform group-hover:-translate-x-1" /> All Products
           </Link>
         </div>
 
         {/* Product Detail Card */}
-        <article className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl">
+        <article className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl [isolation:isolate]">
 
           {/* Header Image / Media Frame */}
-          <div className="relative aspect-[16/8] w-full bg-slate-50 flex items-center justify-center p-6 border-b border-slate-100">
+          <div className="relative w-full max-h-[340px] sm:max-h-[380px] min-h-[220px] bg-slate-50 flex items-center justify-center p-6 border-b border-slate-100 overflow-hidden rounded-t-3xl">
             {imageSrc ? (
               <img
                 src={imageSrc}
                 alt={title}
-                className="max-h-full max-w-full object-contain drop-shadow-md rounded-xl"
+                className="max-h-[260px] sm:max-h-[300px] w-auto h-auto object-contain drop-shadow-md rounded-xl overflow-hidden"
               />
             ) : (
               <div className="flex flex-col items-center justify-center gap-3 text-slate-400">
@@ -123,7 +133,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             {/* Title & Category Badge */}
             <div>
               <span className="inline-block bg-rose-50 text-[#e63946] text-xs font-extrabold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
-                {category} Project
+                {category}
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight">
                 {title}
@@ -132,16 +142,16 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
             {/* External Link / Project URL if provided by Admin */}
             {projectUrl && (
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-[#e63946]">Project Website / External Link</span>
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+                <div className="w-full sm:w-auto">
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-[#e63946]">Visit Site</span>
                   <p className="text-sm font-semibold text-slate-800 break-all mt-0.5">{projectUrl}</p>
                 </div>
                 <a
                   href={projectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#e63946] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#c1121f] transition shrink-0 shadow-sm"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e63946] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#c1121f] transition shrink-0 shadow-sm w-full sm:w-auto"
                 >
                   Visit Live Site <FiExternalLink size={14} />
                 </a>
@@ -154,8 +164,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 Overview & Architecture
               </h2>
               <div
-                className="text-base sm:text-lg leading-relaxed text-slate-600 prose prose-slate max-w-none break-words [overflow-wrap:anywhere] max-w-full overflow-hidden"
-                dangerouslySetInnerHTML={{ __html: description ? description.replace(/&nbsp;/gi, ' ').replace(/\u00a0/g, ' ') : '' }}
+                className="text-base sm:text-lg leading-relaxed text-slate-600 prose prose-slate max-w-none break-words [overflow-wrap:anywhere] max-w-full overflow-hidden text-justify"
+                dangerouslySetInnerHTML={{ __html: getCleanDescriptionHtml(description) }}
               />
             </div>
 
@@ -187,14 +197,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             )}
 
             {/* CTA Banner */}
-            <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-lg font-bold text-slate-900">Want a custom software product like this?</h3>
                 <p className="text-xs text-slate-500">Contact our engineering team to turn your ideas into enterprise reality.</p>
               </div>
               <Link
                 href="/contact-us"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#e63946] px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-[#c1121f] transition cursor-pointer shrink-0"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e63946] px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-[#c1121f] transition cursor-pointer shrink-0 w-full sm:w-auto"
               >
                 Get In Touch <FiArrowRight size={16} />
               </Link>

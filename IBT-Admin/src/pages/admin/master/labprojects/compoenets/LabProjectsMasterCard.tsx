@@ -28,6 +28,20 @@ function getStatusIndicator(status: LabProjectStatus) {
   }
 }
 
+function stripHtml(raw?: string | null): string {
+  if (!raw) return ''
+  return raw
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export const LabProjectsMasterCard = memo(function LabProjectsMasterCard({
   mode,
   project,
@@ -84,7 +98,7 @@ export const LabProjectsMasterCard = memo(function LabProjectsMasterCard({
         </div>
 
         <p className="mt-1 line-clamp-1 sm:line-clamp-2 text-xs leading-relaxed text-[var(--ui-muted)]">
-          {project.description || <span className="italic opacity-60">No description provided.</span>}
+          {stripHtml(project.description) || <span className="italic opacity-60">No description provided.</span>}
         </p>
 
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-500">

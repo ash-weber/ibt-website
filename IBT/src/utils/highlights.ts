@@ -17,6 +17,7 @@ export function generateKeyHighlights(
 
   const cleanText = (raw: string) => {
     return raw
+      .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
       .replace(/<[^>]*>/g, ' ')
       .replace(/&nbsp;/g, ' ')
       .replace(/&amp;/g, '&')

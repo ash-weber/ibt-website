@@ -69,7 +69,7 @@ export default async function LabDetailPage({ params }: LabDetailPageProps) {
             <article className="rounded-[2.5rem] bg-white p-8 shadow-[0_20px_50px_rgba(0,0,0,0.03)] sm:p-12">
               <h2 className="text-2xl font-black text-slate-900">About the Project</h2>
               <div
-                className="mt-6 text-lg leading-relaxed text-slate-600 prose prose-slate max-w-none [&_p]:mb-4"
+                className="mt-6 text-lg leading-relaxed text-slate-600 prose prose-slate max-w-none [&_p]:mb-4 text-justify"
                 dangerouslySetInnerHTML={{ __html: project.content || project.description }}
               />
 

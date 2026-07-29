@@ -230,7 +230,11 @@ label {
 
 .prose p,
 .html-content p,
-.rich-text-content p {
+.rich-text-content p,
+.prose,
+.html-content,
+.rich-text-content {
+  text-align: justify;
   white-space: normal !important;
   word-break: break-word !important;
   overflow-wrap: anywhere !important;

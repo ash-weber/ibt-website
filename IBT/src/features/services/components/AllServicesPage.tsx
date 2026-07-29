@@ -10,6 +10,7 @@ import { ActionButton } from '@/src/shared/ui/ActionButton';
 function stripHtml(raw?: string | null): string {
   if (!raw) return '';
   return raw
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
@@ -373,7 +374,7 @@ export function AllServicesPage() {
       {/* =====================================================
           2.5 ALL SERVICES GRID
       ===================================================== */}
-      <section id="all-services" className="py-12 lg:py-16 bg-white border-t border-slate-100 scroll-mt-20">
+      <section id="all-services" className="py-12 lg:py-16 bg-white border-t border-slate-100 scroll-mt-24 sm:scroll-mt-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h3 className="text-[18px] font-bold uppercase tracking-widest !text-red-500 mb-3">

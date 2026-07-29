@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ActionButton, Input, Modal, RichTextEditor } from '../../../../../component'
 import { ImageUploadField } from '../../../components/ImageUploadField'
+import { extractCleanDescription, extractKeyHighlightsFromHtml } from '../ServicesMasterPage'
 
 type Mode = 'create' | 'edit'
 
@@ -87,7 +88,12 @@ export function ServiceCreateEditModal({
 }: ServiceCreateEditModalProps) {
   const [values, setValues] = useState<ServiceCreateEditFormValues>(() => ({
     ...initialValues,
-    keyHighlights: ensureHighlightArray(initialValues?.keyHighlights),
+    description: extractCleanDescription(initialValues?.description),
+    keyHighlights: ensureHighlightArray(
+      extractKeyHighlightsFromHtml(initialValues?.description).length > 0
+        ? extractKeyHighlightsFromHtml(initialValues?.description)
+        : initialValues?.keyHighlights
+    ),
   }))
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<FormErrors>({})
@@ -100,9 +106,14 @@ export function ServiceCreateEditModal({
       return
     }
 
+    const cleanDesc = extractCleanDescription(initialValues?.description)
+    const extracted = extractKeyHighlightsFromHtml(initialValues?.description)
+    const rawHighlights = extracted.length > 0 ? extracted : initialValues?.keyHighlights
+
     setValues({
       ...initialValues,
-      keyHighlights: ensureHighlightArray(initialValues?.keyHighlights),
+      description: cleanDesc,
+      keyHighlights: ensureHighlightArray(rawHighlights),
     })
     setSelectedImageFile(null)
     setErrors({})
@@ -134,7 +145,8 @@ export function ServiceCreateEditModal({
   const handleSubmit = () => {
     const finalTitle = values.title.trim()
     const finalSlug = values.slug.trim() || slugify(finalTitle) || 'item-' + Date.now()
-    let finalDesc = values.description.trim() || `${finalTitle} - ${values.categoryType === 'PRODUCT' ? 'Product' : 'Service'} built by I-BACUS TECH.`
+    const cleanBaseDesc = extractCleanDescription(values.description.trim())
+    let finalDesc = cleanBaseDesc || `${finalTitle} - ${values.categoryType === 'PRODUCT' ? 'Product' : 'Service'} built by I-BACUS TECH.`
     const finalImage = values.imageUrl.trim() || (selectedImageFile ? '' : DEFAULT_IMAGE_URL)
 
     if (values.keyHighlights && Array.isArray(values.keyHighlights)) {
@@ -144,7 +156,6 @@ export function ServiceCreateEditModal({
         .slice(0, 4)
 
       if (items.length > 0) {
-        const cleanBaseDesc = finalDesc.replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '').trim()
         const listHtml = `<ul class="custom-key-highlights">${items.map((it) => `<li>${it}</li>`).join('')}</ul>`
         finalDesc = cleanBaseDesc ? `${cleanBaseDesc}\n${listHtml}` : listHtml
       }
