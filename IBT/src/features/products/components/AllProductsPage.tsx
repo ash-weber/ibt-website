@@ -31,7 +31,8 @@ import {
   FiBookOpen,
   FiUser,
   FiTruck,
-  FiRefreshCw
+  FiRefreshCw,
+  FiChevronUp
 } from 'react-icons/fi';
 
 function stripHtml(raw?: string | null): string {
@@ -380,7 +381,7 @@ export function AllProductsPage() {
     fetchProducts();
   }, []);
 
-  const [visibleCount, setVisibleCount] = useState(100);
+  const [visibleCount, setVisibleCount] = useState(8);
 
   // Determine displayed projects
   const currentAllProjects = dynamicProducts;
@@ -576,16 +577,27 @@ export function AllProductsPage() {
             </div>
           )}
 
-          {/* Load More Button if projects count > visibleCount */}
-          {currentAllProjects.length > visibleCount && (
-            <div className="mt-10 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setVisibleCount((prev) => prev + 8)}
-                className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
-              >
-                Load More Projects <FiRefreshCw className="text-[#e63946]" size={15} />
-              </button>
+          {/* Action buttons: Load More / Show Less */}
+          {(currentAllProjects.length > visibleCount || visibleCount > 8) && (
+            <div className="mt-10 flex justify-center gap-4 flex-wrap">
+              {currentAllProjects.length > visibleCount && (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((prev) => prev + 8)}
+                  className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
+                >
+                  Load More Projects <FiRefreshCw className="text-[#e63946]" size={15} />
+                </button>
+              )}
+              {visibleCount > 8 && (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount(8)}
+                  className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
+                >
+                  Show Less <FiChevronUp className="text-[#e63946]" size={15} />
+                </button>
+              )}
             </div>
           )}
 
@@ -604,16 +616,16 @@ export function AllProductsPage() {
 
               {/* Left Column */}
               <div className="lg:col-span-4 xl:col-span-3 text-left">
-                <h2 className="text-2xl sm:text-3xl font-black text-[#0f172a] leading-tight">
+                <h2 className="text-2xl mb-1 sm:text-3xl font-black text-[#0f172a] leading-tight">
                   Let's Build Your Next <br className="hidden lg:block" />
                   <span className="text-[#e63946]">Successful Product</span>
                 </h2>
 
-                <p className="mt-5 p-4 sm:mt-6 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                <p className="mt-6 sm:mt-8 text-xs sm:text-sm text-slate-600 leading-relaxed">
                   We help startups and enterprises turn their ideas into scalable digital products.
                 </p>
 
-                <div className="mt-5 w-full">
+                <div className="mt-6 sm:mt-8 w-full">
                   <Link
                     href="/contact-us"
                     className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[#e63946] px-5 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-[#c1121f]"
