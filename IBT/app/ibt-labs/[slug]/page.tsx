@@ -119,7 +119,7 @@ export default async function LabDetailPage({ params }: LabDetailPageProps) {
               </section>
             )}
 
-            {/* Project Info */}
+            {/* Project Info .*/}
             <section className="rounded-3xl bg-white p-8 shadow-[0_20px_50px_rgba(0,0,0,0.03)]">
               <h3 className="text-lg font-black text-slate-900">Technical Details</h3>
 
