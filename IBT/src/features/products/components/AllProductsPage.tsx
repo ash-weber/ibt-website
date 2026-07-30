@@ -423,7 +423,7 @@ export function AllProductsPage() {
                 <span className="text-[#e63946]">Real Digital</span> Products
               </h1>
 
-              <p className="mt-6 pt-4 sm:mt-8 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+              <p className="mt-6 pt-4 sm:mt-8 text-base sm:text-lg text-slate-600 leading-relaxed w-full max-w-full lg:max-w-xl">
                 We build scalable web applications, mobile apps, AI solutions and enterprise software that solve real business problems and create real impact.
               </p>
 
@@ -470,14 +470,14 @@ export function AllProductsPage() {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="absolute -top-4 -left-4 sm:top-4 sm:-left-6 bg-[#0f172a] rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-800 flex items-center gap-3.5 z-20"
+                  className="absolute -top-4 -left-4 sm:top-4 sm:-left-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-100/80 flex items-center gap-3.5 z-20"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#e63946]/20 text-[#e63946]">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-[#e63946]">
                     <FiBriefcase size={20} />
                   </div>
                   <div>
-                    <div className="text-lg font-extrabold text-white leading-none">250+</div>
-                    <div className="text-[11px] font-semibold text-slate-300 mt-1">Projects Delivered</div>
+                    <div className="text-lg font-extrabold text-[#0f172a] leading-none">250+</div>
+                    <div className="text-[11px] font-semibold text-slate-500 mt-1">Projects Delivered</div>
                   </div>
                 </motion.div>
 
@@ -486,14 +486,14 @@ export function AllProductsPage() {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.6 }}
-                  className="absolute -bottom-4 -right-4 sm:bottom-4 sm:-right-6 bg-[#0f172a] rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-800 flex items-center gap-3.5 z-20"
+                  className="absolute -bottom-4 -right-4 sm:bottom-4 sm:-right-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-100/80 flex items-center gap-3.5 z-20"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-400">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
                     <FiStar size={20} />
                   </div>
                   <div>
-                    <div className="text-lg font-extrabold text-white leading-none">95%</div>
-                    <div className="text-[11px] font-semibold text-slate-300 mt-1">Client Satisfaction</div>
+                    <div className="text-lg font-extrabold text-[#0f172a] leading-none">95%</div>
+                    <div className="text-[11px] font-semibold text-slate-500 mt-1">Client Satisfaction</div>
                   </div>
                 </motion.div>
               </div>
