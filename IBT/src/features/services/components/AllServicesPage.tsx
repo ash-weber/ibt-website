@@ -110,6 +110,17 @@ export function AllServicesPage() {
     void loadAllServices();
   }, [loadAllServices]);
 
+  useEffect(() => {
+    if (!loading && typeof window !== 'undefined' && window.location.hash === '#all-services') {
+      const element = document.getElementById('all-services');
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [loading]);
+
   // Dynamic configuration maps
   const whatFeatures = useMemo(() => {
     const defaultWhatFeatures = [
@@ -176,36 +187,8 @@ export function AllServicesPage() {
   const processBadge = settings?.servicesProcessBadge || "HOW WE DELIVER";
 
   const displayServices = services;
-
-  // Carousel logic for All Services offerings grid
-  const [allServicesCarouselIndex, setAllServicesCarouselIndex] = useState(0);
-  const [allServicesVisibleCount, setAllServicesVisibleCount] = useState(3);
-
-  useEffect(() => {
-    const updateVisibleAllServices = () => {
-      const w = window.innerWidth;
-      if (w >= 1024) setAllServicesVisibleCount(3);
-      else if (w >= 640) setAllServicesVisibleCount(2);
-      else setAllServicesVisibleCount(1);
-    };
-    updateVisibleAllServices();
-    window.addEventListener('resize', updateVisibleAllServices);
-    return () => window.removeEventListener('resize', updateVisibleAllServices);
-  }, []);
-
-  const showPrevAllServices = () => {
-    setAllServicesCarouselIndex((prev) => Math.max(0, prev - 1));
-  };
-  const showNextAllServices = () => {
-    setAllServicesCarouselIndex((prev) => Math.min(displayServices.length - allServicesVisibleCount, prev + 1));
-  };
-
-  useEffect(() => {
-    setAllServicesCarouselIndex((prev) => {
-      const maxIdx = Math.max(0, displayServices.length - allServicesVisibleCount);
-      return Math.min(prev, maxIdx);
-    });
-  }, [allServicesVisibleCount, displayServices.length]);
+  const [visibleCount, setVisibleCount] = useState(4);
+  const displayedServices = displayServices.slice(0, visibleCount);
 
   /* =========================================================
      MAIN RENDER
@@ -400,108 +383,98 @@ export function AllServicesPage() {
               No services available at the moment.
             </div>
           ) : (
-            <div className="relative px-8 sm:px-12 lg:px-16">
-              {/* Arrows */}
-              {displayServices.length > allServicesVisibleCount && (
-                <>
-                  <button
-                    onClick={showPrevAllServices}
-                    disabled={allServicesCarouselIndex <= 0}
-                    className={`absolute top-[40%] -translate-y-1/2 -left-2 sm:left-0 lg:left-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex <= 0 ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
-                      }`}
-                  >
-                    <FiChevronLeft />
-                  </button>
-                  <button
-                    onClick={showNextAllServices}
-                    disabled={allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount}
-                    className={`absolute top-[40%] -translate-y-1/2 -right-2 sm:right-0 lg:right-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
-                      }`}
-                  >
-                    <FiChevronRight />
-                  </button>
-                </>
-              )}
+            <div>
+              {/* Grid Layout */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {displayedServices.map((service, idx) => {
+                  const cardColors = [
+                    { bg: 'bg-blue-50', text: 'text-blue-600', hoverBg: 'hover:border-blue-200' },
+                    { bg: 'bg-rose-50', text: 'text-rose-500', hoverBg: 'hover:border-rose-200' },
+                    { bg: 'bg-emerald-50', text: 'text-emerald-500', hoverBg: 'hover:border-emerald-200' },
+                    { bg: 'bg-purple-50', text: 'text-[#9333ea]', hoverBg: 'hover:border-purple-200' },
+                    { bg: 'bg-orange-50', text: 'text-orange-500', hoverBg: 'hover:border-orange-200' },
+                    { bg: 'bg-sky-50', text: 'text-sky-500', hoverBg: 'hover:border-sky-200' },
+                  ];
+                  const colorSet = cardColors[idx % cardColors.length];
 
-              {/* Carousel Track */}
-              <div className="overflow-hidden py-4 -my-4">
-                <motion.div
-                  className="flex transition-transform duration-500 ease-out"
-                  style={{
-                    width: `${(displayServices.length * 100) / allServicesVisibleCount}%`,
-                    transform: `translateX(-${(allServicesCarouselIndex * 100) / displayServices.length}%)`,
-                  }}
-                >
-                  {displayServices.map((service, idx) => {
-                    const cardColors = [
-                      { bg: 'bg-blue-50', text: 'text-blue-600', hoverBg: 'hover:border-blue-200' },
-                      { bg: 'bg-rose-50', text: 'text-rose-500', hoverBg: 'hover:border-rose-200' },
-                      { bg: 'bg-emerald-50', text: 'text-emerald-500', hoverBg: 'hover:border-emerald-200' },
-                      { bg: 'bg-purple-50', text: 'text-[#9333ea]', hoverBg: 'hover:border-purple-200' },
-                      { bg: 'bg-orange-50', text: 'text-orange-500', hoverBg: 'hover:border-orange-200' },
-                      { bg: 'bg-sky-50', text: 'text-sky-500', hoverBg: 'hover:border-sky-200' },
-                    ];
-                    const colorSet = cardColors[idx % cardColors.length];
-
-                    return (
-                      <div
-                        key={service.id || idx}
-                        className="px-3 text-left"
-                        style={{ flex: `0 0 ${100 / displayServices.length}%` }}
+                  return (
+                    <div key={service.id || idx} className="text-left">
+                      <Link
+                        href={`/services/${service.slug}`}
+                        className="group block h-full"
                       >
-                        <Link
-                          href={`/services/${service.slug}`}
-                          className="group block h-full"
-                        >
-                          <div className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white border border-slate-100 p-8 text-left hover:shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-1 ${colorSet.hoverBg}`}>
+                        <div className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white border border-slate-100 p-8 text-left hover:shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-1 ${colorSet.hoverBg}`}>
 
-                            {/* Visual container (Image or styled icon placeholder) */}
-                            <div className="relative overflow-hidden rounded-xl mb-6 aspect-video bg-slate-50 border border-slate-100/50 flex items-center justify-center">
-                              {service.imageUrl ? (
-                                <img
-                                  src={resolveImageUrl(service.imageUrl)}
-                                  alt={service.title}
-                                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
-                                />
-                              ) : (
-                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${colorSet.bg} ${colorSet.text}`}>
-                                  <FiBriefcase size={28} />
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Tags */}
-                            {service.tags && service.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mb-4">
-                                {service.tags.map((tag, tagIdx) => (
-                                  <span
-                                    key={tagIdx}
-                                    className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${colorSet.bg} ${colorSet.text}`}
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
+                          {/* Visual container (Image or styled icon placeholder) */}
+                          <div className="relative overflow-hidden rounded-xl mb-6 aspect-video bg-slate-50 border border-slate-100/50 flex items-center justify-center">
+                            {service.imageUrl ? (
+                              <img
+                                src={resolveImageUrl(service.imageUrl)}
+                                alt={service.title}
+                                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                              />
+                            ) : (
+                              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${colorSet.bg} ${colorSet.text}`}>
+                                <FiBriefcase size={28} />
                               </div>
                             )}
-
-                            <h3 className="text-xl font-bold text-[#0f172a] mb-3 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
-                              {service.title}
-                            </h3>
-
-                            <p className="text-[13px] leading-relaxed text-slate-500 mb-6 flex-1 line-clamp-3">
-                              {stripHtml(service.description) || "Customized technology solutions designed to streamline operations and enhance productivity."}
-                            </p>
-
-                            <div className={`mt-auto flex items-center gap-1.5 text-sm font-bold ${colorSet.text}`}>
-                              Learn More <FiArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
-                            </div>
                           </div>
-                        </Link>
-                      </div>
-                    );
-                  })}
-                </motion.div>
+
+                          {/* Tags */}
+                          {service.tags && service.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {service.tags.map((tag, tagIdx) => (
+                                <span
+                                  key={tagIdx}
+                                  className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${colorSet.bg} ${colorSet.text}`}
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          <h3 className="text-xl font-bold text-[#0f172a] mb-3 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
+                            {service.title}
+                          </h3>
+
+                          <p className="text-[13px] leading-relaxed text-slate-500 mb-6 flex-1 line-clamp-3">
+                            {stripHtml(service.description) || "Customized technology solutions designed to streamline operations and enhance productivity."}
+                          </p>
+
+                          <div className={`mt-auto flex items-center gap-1.5 text-sm font-bold ${colorSet.text}`}>
+                            Learn More <FiArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  );
+                })}
               </div>
+
+              {/* Action buttons: Load More / Show Less */}
+              {(displayServices.length > visibleCount || visibleCount > 4) && (
+                <div className="mt-12 flex justify-center gap-4 flex-wrap">
+                  {displayServices.length > visibleCount && (
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCount((prev) => prev + 4)}
+                      className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                      Show More Services <FiRefreshCw className="text-[#e63946]" size={15} />
+                    </button>
+                  )}
+                  {visibleCount > 4 && (
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCount(4)}
+                      className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                      Show Less <FiIcons.FiChevronUp className="text-[#e63946]" size={15} />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

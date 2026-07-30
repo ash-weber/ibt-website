@@ -62,7 +62,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6">
         <Link
-          href="/services"
+          href="/services#all-services"
           className="group inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition-colors hover:text-[#e63946]"
         >
           <FiArrowLeft className="transition-transform group-hover:-translate-x-1" /> Back to Services

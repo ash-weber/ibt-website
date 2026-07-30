@@ -101,7 +101,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         {/* Back Link */}
         <div className="mb-8">
           <Link
-            href="/products"
+            href="/products#all-projects"
             className="group inline-flex items-center gap-2 text-md font-bold text-slate-600 transition-colors hover:text-[#e63946]"
           >
             <FiArrowLeft className="transition-transform group-hover:-translate-x-1" /> All Products

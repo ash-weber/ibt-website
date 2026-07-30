@@ -381,6 +381,17 @@ export function AllProductsPage() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (!loading && typeof window !== 'undefined' && window.location.hash === '#all-projects') {
+      const element = document.getElementById('all-projects');
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [loading]);
+
   const [visibleCount, setVisibleCount] = useState(8);
 
   // Determine displayed projects
@@ -586,7 +597,7 @@ export function AllProductsPage() {
                   onClick={() => setVisibleCount((prev) => prev + 8)}
                   className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
                 >
-                  Load More Products <FiRefreshCw className="text-[#e63946]" size={15} />
+                  View More Products <FiRefreshCw className="text-[#e63946]" size={15} />
                 </button>
               )}
               {visibleCount > 8 && (
