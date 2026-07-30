@@ -382,8 +382,8 @@ export function AllProductsPage() {
   }, []);
 
   useEffect(() => {
-    if (!loading && typeof window !== 'undefined' && window.location.hash === '#all-projects') {
-      const element = document.getElementById('all-projects');
+    if (!loading && typeof window !== 'undefined' && window.location.hash === '#all-products') {
+      const element = document.getElementById('all-products');
       if (element) {
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth' });
@@ -430,7 +430,7 @@ export function AllProductsPage() {
               {/* Action Buttons */}
               <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full">
                 <a
-                  href="#all-projects"
+                  href="#all-products"
                   className="inline-flex w-full sm:w-[210px] h-[52px] items-center justify-center gap-2 rounded-xl bg-[#e63946] px-6 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-[#c1121f]"
                 >
                   View All Products <FiArrowRight size={16} />
@@ -470,14 +470,14 @@ export function AllProductsPage() {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="absolute -top-4 -left-4 sm:top-4 sm:-left-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-100/80 flex items-center gap-3.5 z-20"
+                  className="absolute -top-4 -left-4 sm:top-4 sm:-left-6 bg-[#0f172a] rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-800 flex items-center gap-3.5 z-20"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-[#e63946]">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#e63946]/20 text-[#e63946]">
                     <FiBriefcase size={20} />
                   </div>
                   <div>
-                    <div className="text-lg font-extrabold text-[#0f172a] leading-none">250+</div>
-                    <div className="text-[11px] font-semibold text-slate-500 mt-1">Projects Delivered</div>
+                    <div className="text-lg font-extrabold text-white leading-none">250+</div>
+                    <div className="text-[11px] font-semibold text-slate-300 mt-1">Projects Delivered</div>
                   </div>
                 </motion.div>
 
@@ -486,14 +486,14 @@ export function AllProductsPage() {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.6 }}
-                  className="absolute -bottom-4 -right-4 sm:bottom-4 sm:-right-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-100/80 flex items-center gap-3.5 z-20"
+                  className="absolute -bottom-4 -right-4 sm:bottom-4 sm:-right-6 bg-[#0f172a] rounded-2xl p-3.5 sm:p-4 shadow-xl border border-slate-800 flex items-center gap-3.5 z-20"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-400">
                     <FiStar size={20} />
                   </div>
                   <div>
-                    <div className="text-lg font-extrabold text-[#0f172a] leading-none">95%</div>
-                    <div className="text-[11px] font-semibold text-slate-500 mt-1">Client Satisfaction</div>
+                    <div className="text-lg font-extrabold text-white leading-none">95%</div>
+                    <div className="text-[11px] font-semibold text-slate-300 mt-1">Client Satisfaction</div>
                   </div>
                 </motion.div>
               </div>
@@ -508,14 +508,22 @@ export function AllProductsPage() {
       {/* =========================================================================
           3. ALL PROJECTS SECTION
       ========================================================================= */}
-      <section id="all-projects" className="py-16 bg-white scroll-mt-24 sm:scroll-mt-28">
+      <section id="all-products" className="py-16 bg-white scroll-mt-24 sm:scroll-mt-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {/* Header */}
-          <div className="mb-10 text-left">
-            <span className="text-[18px] font-bold uppercase tracking-[0.2em] text-[#e63946]">
-              ALL PRODUCTS
-            </span>
+          <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-left">
+            <div>
+              <span className="text-[18px] font-bold uppercase tracking-[0.2em] text-[#e63946]">
+                ALL PRODUCTS
+              </span>
+              
+            </div>
+            {!loading && currentAllProjects.length > 0 && (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-100 text-[#e63946] text-xs font-extrabold self-start sm:self-auto shadow-xs">
+                <span>Total: {currentAllProjects.length} Products</span>
+              </div>
+            )}
           </div>
 
           {/* Loading or Projects Grid */}
