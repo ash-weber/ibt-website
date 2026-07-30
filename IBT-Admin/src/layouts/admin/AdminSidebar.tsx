@@ -14,7 +14,6 @@ type AdminSidebarProps = {
   onToggleLocked: () => void
 }
 
-// Flexible NavItem type - supports both simple items and items with children
 type NavItem = {
   label: string
   icon: ReactNode
