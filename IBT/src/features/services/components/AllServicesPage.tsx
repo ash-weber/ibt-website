@@ -56,7 +56,10 @@ import {
 function cleanHtml(html: string | undefined | null): string {
   if (!html) return '';
   if (typeof html !== 'string') return '';
-  return html.replace(/&nbsp;/g, ' ');
+  return html
+    .replace(/&nbsp;/g, ' ')
+    .replace(/text-align:\s*(left|justify);?/gi, '')
+    .replace(/align="left"/gi, '');
 }
 
 /* =========================================================
@@ -495,11 +498,11 @@ export function AllServicesPage() {
           <div className="w-full flex justify-center mb-20">
             {settings?.servicesProcessDescription ? (
               <div
-                className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0 html-content w-full overflow-hidden"
+                className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0 html-content w-full overflow-hidden [&_*]:!text-center [&_p]:!text-center [&_p]:mx-auto flex flex-col items-center justify-center"
                 dangerouslySetInnerHTML={{ __html: cleanHtml(settings.servicesProcessDescription) }}
               />
             ) : (
-              <p className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0">
+              <p className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0 mx-auto">
                 A proven process, a skilled team and the right technology to deliver exceptional results.
               </p>
             )}
@@ -517,8 +520,8 @@ export function AllServicesPage() {
                     <div className={`w-14 h-14 rounded-full ${isEven ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'bg-blue-50 text-blue-500 shadow-sm'} flex items-center justify-center mb-6 border border-white`}>
                       {renderStepIcon(idx)}
                     </div>
-                    <h4 className="text-[15px] font-bold text-[#0f172a] uppercase tracking-wider mb-3">{step.title}</h4>
-                    <p className="text-[13px] text-slate-500 font-medium leading-relaxed">
+                    <h4 className="text-[15px] font-bold text-[#0f172a] uppercase tracking-wider mb-3 text-center">{step.title}</h4>
+                    <p className="text-[13px] text-slate-500 font-medium leading-relaxed text-center">
                       {step.desc}
                     </p>
                   </div>
