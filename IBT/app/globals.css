@@ -217,11 +217,27 @@ label {
 /* Force word wrap on rich text output */
 .html-content,
 .rich-text-content,
-.html-content p,
-.rich-text-content p {
+.prose,
+.html-content *,
+.rich-text-content *,
+.prose * {
   white-space: normal !important;
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.prose p,
+.html-content p,
+.rich-text-content p,
+.prose,
+.html-content,
+.rich-text-content {
+  text-align: justify;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
 }
 
 /* Hide WhatsApp and scroll buttons when mobile nav is open */

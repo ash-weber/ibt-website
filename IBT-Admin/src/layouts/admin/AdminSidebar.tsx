@@ -14,7 +14,6 @@ type AdminSidebarProps = {
   onToggleLocked: () => void
 }
 
-// Flexible NavItem type - supports both simple items and items with children
 type NavItem = {
   label: string
   icon: ReactNode
@@ -34,7 +33,7 @@ const NAV_LINKS: NavItem[] = [
     children: [
       { label: 'Home Content', icon: <FiHome />, to: '/admin/master/home/content' },
       { label: 'About Content', icon: <FiFileText />, to: '/admin/master/about/content' },
-      { label: 'Services', icon: <FiBriefcase />, to: '/admin/master/services' },
+      { label: 'Services & Products', icon: <FiBriefcase />, to: '/admin/master/services' },
       { label: 'Stats', icon: <FiFileText />, to: '/admin/master/stats' },
       { label: 'Testimonials', icon: <FiStar />, to: '/admin/master/testimonials' },
       { label: 'Partners', icon: <FiLayers />, to: '/admin/master/partners' },

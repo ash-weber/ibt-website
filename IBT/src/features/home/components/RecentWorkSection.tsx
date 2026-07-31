@@ -2,10 +2,24 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FiArrowRight, FiArrowLeft } from 'react-icons/fi';
+import { FiArrowRight, FiArrowLeft, FiArrowUpRight } from 'react-icons/fi';
 import Link from 'next/link';
 
 import { useSocketSettings } from '@/src/providers/SocketSettingsProvider';
+
+function stripHtml(raw?: string | null): string {
+  if (!raw) return '';
+  return raw
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 const fallbackProjects = [
   {
@@ -173,8 +187,8 @@ export function RecentWorkSection() {
                   <h4 className="text-base font-extrabold text-[#0f172a] mb-1">
                     {project.title}
                   </h4>
-                  <p className="text-xs text-slate-500 mb-6 flex-1">
-                    {project.description}
+                  <p className="text-xs text-slate-500 mb-6 flex-1 line-clamp-3">
+                    {stripHtml(project.description)}
                   </p>
                   <div>
                     <span className={`inline-flex px-3 py-1 text-[10px] font-bold rounded-full ${project.badgeClass} uppercase tracking-wider`}>

@@ -20,6 +20,8 @@ export type ServiceMasterItem = {
   imageUrl: string
   tags: string[]
   projectUrl?: string | null
+  categoryType?: 'SERVICE' | 'PRODUCT'
+  isFeatured?: boolean
   order: number
   createdAt: string
   updatedAt: string
@@ -32,6 +34,8 @@ export type ServiceMasterPayload = {
   imageUrl?: string
   tags?: string[]
   projectUrl?: string | null
+  categoryType?: 'SERVICE' | 'PRODUCT'
+  isFeatured?: boolean
   order?: number
 }
 

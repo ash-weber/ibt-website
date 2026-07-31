@@ -30,12 +30,10 @@ const footerLinks = [
     items: [
       { label: 'Home', href: '/' },
       { label: 'About Us', href: '/about-us' },
-
       { label: 'Services', href: '/services' },
+      { label: 'Products', href: '/products' },
       { label: 'Internship', href: '/internship' },
-
       { label: 'Contact Us', href: '/contact-us' },
-
     ],
   },
 

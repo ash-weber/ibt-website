@@ -33,7 +33,7 @@ const parseNullableDate = (value: unknown) => {
 };
 
 const blogSlugSchema = z
-  .string({ required_error: "Blog slug is required" })
+  .string()
   .trim()
   .min(1, "Blog slug must be at least 1 character long")
   .max(300, "Blog slug must be at most 300 characters long");

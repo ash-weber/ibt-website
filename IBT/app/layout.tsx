@@ -76,8 +76,9 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col overflow-x-clip">
+      <body className="min-h-full flex flex-col overflow-x-clip" suppressHydrationWarning>
         <SocketSettingsProvider initialSettings={initialSettings}>
           <MaintenanceOverlay>
             <div id="scroll-anchor" className="absolute top-0 left-0 w-full h-10 pointer-events-none opacity-0 z-[-1]" />

@@ -1,8 +1,4 @@
-/**
- * Socket Settings Provider
- * Provides real-time site settings to the entire app
- * Handles connection lifecycle and broadcasts updates
- */
+
 
 'use client';
 

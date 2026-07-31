@@ -41,13 +41,10 @@ export function ContactFormClient({ initialSettings, initialBranches }: ContactF
   const handleChange = (field: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     let value = event.target.value
     if (field === 'phone') {
-      // Allow only numbers and the plus sign
       value = value.replace(/[^\d+]/g, '')
     } else if (field === 'firstName' || field === 'lastName') {
-      // Allow only letters and spaces
       value = value.replace(/[^a-zA-Z\s]/g, '')
     } else if (field === 'email') {
-      // Allow only valid email characters
       value = value.replace(/[^a-zA-Z0-9@.]/g, '')
     }
     setFormData((prev) => ({ ...prev, [field]: value }))

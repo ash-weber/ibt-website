@@ -80,11 +80,14 @@ model Service {
   tags        String[]
   order       Int
   projectUrl  String?
+  categoryType String  @default("SERVICE")
+  isFeatured  Boolean  @default(false)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([order])
+  @@index([categoryType])
 }
 
 model Branch {

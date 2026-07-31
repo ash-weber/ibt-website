@@ -5,6 +5,23 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 import { apiClient, type PublicService } from '@/src/api/client';
+import { ActionButton } from '@/src/shared/ui/ActionButton';
+
+function stripHtml(raw?: string | null): string {
+  if (!raw) return '';
+  return raw
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 import { Loader, SiteButton } from '@/src/shared/ui';
 import { useSocketSettings } from '@/src/providers/SocketSettingsProvider';
 import { resolveImageUrl } from '@/src/utils/image';
@@ -39,7 +56,10 @@ import {
 function cleanHtml(html: string | undefined | null): string {
   if (!html) return '';
   if (typeof html !== 'string') return '';
-  return html.replace(/&nbsp;/g, ' ');
+  return html
+    .replace(/&nbsp;/g, ' ')
+    .replace(/text-align:\s*(left|justify);?/gi, '')
+    .replace(/align="left"/gi, '');
 }
 
 /* =========================================================
@@ -78,7 +98,7 @@ export function AllServicesPage() {
     setLoading(true);
 
     try {
-      const result = await apiClient.getServices(1, 100);
+      const result = await apiClient.getServices(1, 100, 'SERVICE');
       setServices(result.items);
     } catch (err) {
       console.warn('Failed to load services:', err);
@@ -92,6 +112,17 @@ export function AllServicesPage() {
   useEffect(() => {
     void loadAllServices();
   }, [loadAllServices]);
+
+  useEffect(() => {
+    if (!loading && typeof window !== 'undefined' && window.location.hash === '#all-services') {
+      const element = document.getElementById('all-services');
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [loading]);
 
   // Dynamic configuration maps
   const whatFeatures = useMemo(() => {
@@ -158,72 +189,9 @@ export function AllServicesPage() {
   const processTitle = settings?.servicesProcessTitle || "How We Deliver Excellence";
   const processBadge = settings?.servicesProcessBadge || "HOW WE DELIVER";
 
-  const fallbackServices = [
-    {
-      id: "1",
-      title: "Analytics Dashboard",
-      slug: "analytics-dashboard",
-      tags: ["Web Application"],
-      imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    },
-    {
-      id: "2",
-      title: "Edu LMS Platform",
-      slug: "edu-lms-platform",
-      tags: ["Web Application"],
-      imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    },
-    {
-      id: "3",
-      title: "ThreatShield AI",
-      slug: "threatshield-ai",
-      tags: ["AI / ML Solution"],
-      imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    },
-    {
-      id: "4",
-      title: "Smart Inventory System",
-      slug: "smart-inventory-system",
-      tags: ["IoT Solution"],
-      imageUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800",
-      description: ""
-    }
-  ] as PublicService[];
-
-  const displayServices = services.length > 0 ? services : fallbackServices;
-
-  // Carousel logic for All Services offerings grid
-  const [allServicesCarouselIndex, setAllServicesCarouselIndex] = useState(0);
-  const [allServicesVisibleCount, setAllServicesVisibleCount] = useState(3);
-
-  useEffect(() => {
-    const updateVisibleAllServices = () => {
-      const w = window.innerWidth;
-      if (w >= 1024) setAllServicesVisibleCount(3);
-      else if (w >= 640) setAllServicesVisibleCount(2);
-      else setAllServicesVisibleCount(1);
-    };
-    updateVisibleAllServices();
-    window.addEventListener('resize', updateVisibleAllServices);
-    return () => window.removeEventListener('resize', updateVisibleAllServices);
-  }, []);
-
-  const showPrevAllServices = () => {
-    setAllServicesCarouselIndex((prev) => Math.max(0, prev - 1));
-  };
-  const showNextAllServices = () => {
-    setAllServicesCarouselIndex((prev) => Math.min(displayServices.length - allServicesVisibleCount, prev + 1));
-  };
-
-  useEffect(() => {
-    setAllServicesCarouselIndex((prev) => {
-      const maxIdx = Math.max(0, displayServices.length - allServicesVisibleCount);
-      return Math.min(prev, maxIdx);
-    });
-  }, [allServicesVisibleCount, displayServices.length]);
+  const displayServices = services;
+  const [visibleCount, setVisibleCount] = useState(4);
+  const displayedServices = displayServices.slice(0, visibleCount);
 
   /* =========================================================
      MAIN RENDER
@@ -392,7 +360,7 @@ export function AllServicesPage() {
       {/* =====================================================
           2.5 ALL SERVICES GRID
       ===================================================== */}
-      <section id="all-services" className="py-12 lg:py-16 bg-white border-t border-slate-100 scroll-mt-20">
+      <section id="all-services" className="py-12 lg:py-16 bg-white border-t border-slate-100 scroll-mt-24 sm:scroll-mt-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h3 className="text-[18px] font-bold uppercase tracking-widest !text-red-500 mb-3">
@@ -408,39 +376,20 @@ export function AllServicesPage() {
             </div>
           </div>
 
-          <div className="relative px-8 sm:px-12 lg:px-16">
-            {/* Arrows */}
-            {displayServices.length > allServicesVisibleCount && (
-              <>
-                <button
-                  onClick={showPrevAllServices}
-                  disabled={allServicesCarouselIndex <= 0}
-                  className={`absolute top-[40%] -translate-y-1/2 -left-2 sm:left-0 lg:left-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex <= 0 ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                >
-                  <FiChevronLeft />
-                </button>
-                <button
-                  onClick={showNextAllServices}
-                  disabled={allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount}
-                  className={`absolute top-[40%] -translate-y-1/2 -right-2 sm:right-0 lg:right-2 z-20 w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md transition-colors ${allServicesCarouselIndex >= displayServices.length - allServicesVisibleCount ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                >
-                  <FiChevronRight />
-                </button>
-              </>
-            )}
-
-            {/* Carousel Track */}
-            <div className="overflow-hidden py-4 -my-4">
-              <motion.div
-                className="flex transition-transform duration-500 ease-out"
-                style={{
-                  width: `${(displayServices.length * 100) / allServicesVisibleCount}%`,
-                  transform: `translateX(-${(allServicesCarouselIndex * 100) / displayServices.length}%)`,
-                }}
-              >
-                {displayServices.map((service, idx) => {
+          {/* Services Loading, Empty, or Carousel Track */}
+          {loading ? (
+            <div className="py-20 flex flex-col items-center justify-center gap-3">
+              <Loader size="lg" label="Loading services..." />
+            </div>
+          ) : displayServices.length === 0 ? (
+            <div className="py-16 text-center text-slate-500 font-semibold border border-dashed border-slate-200 rounded-2xl">
+              No services available at the moment.
+            </div>
+          ) : (
+            <div>
+              {/* Grid Layout */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {displayedServices.map((service, idx) => {
                   const cardColors = [
                     { bg: 'bg-blue-50', text: 'text-blue-600', hoverBg: 'hover:border-blue-200' },
                     { bg: 'bg-rose-50', text: 'text-rose-500', hoverBg: 'hover:border-rose-200' },
@@ -452,11 +401,7 @@ export function AllServicesPage() {
                   const colorSet = cardColors[idx % cardColors.length];
 
                   return (
-                    <div
-                      key={service.id || idx}
-                      className="px-3 text-left"
-                      style={{ flex: `0 0 ${100 / displayServices.length}%` }}
-                    >
+                    <div key={service.id || idx} className="text-left">
                       <Link
                         href={`/services/${service.slug}`}
                         className="group block h-full"
@@ -497,7 +442,7 @@ export function AllServicesPage() {
                           </h3>
 
                           <p className="text-[13px] leading-relaxed text-slate-500 mb-6 flex-1 line-clamp-3">
-                            {service.description || "Customized technology solutions designed to streamline operations and enhance productivity."}
+                            {stripHtml(service.description) || "Customized technology solutions designed to streamline operations and enhance productivity."}
                           </p>
 
                           <div className={`mt-auto flex items-center gap-1.5 text-sm font-bold ${colorSet.text}`}>
@@ -508,9 +453,33 @@ export function AllServicesPage() {
                     </div>
                   );
                 })}
-              </motion.div>
+              </div>
+
+              {/* Action buttons: Load More / Show Less */}
+              {(displayServices.length > visibleCount || visibleCount > 4) && (
+                <div className="mt-12 flex justify-center gap-4 flex-wrap">
+                  {displayServices.length > visibleCount && (
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCount((prev) => prev + 4)}
+                      className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                      Show More Services <FiRefreshCw className="text-[#e63946]" size={15} />
+                    </button>
+                  )}
+                  {visibleCount > 4 && (
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCount(4)}
+                      className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-[#0f172a] shadow-sm hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                      Show Less <FiIcons.FiChevronUp className="text-[#e63946]" size={15} />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -529,11 +498,11 @@ export function AllServicesPage() {
           <div className="w-full flex justify-center mb-20">
             {settings?.servicesProcessDescription ? (
               <div
-                className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0 html-content w-full overflow-hidden"
+                className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0 html-content w-full overflow-hidden [&_*]:!text-center [&_p]:!text-center [&_p]:mx-auto flex flex-col items-center justify-center"
                 dangerouslySetInnerHTML={{ __html: cleanHtml(settings.servicesProcessDescription) }}
               />
             ) : (
-              <p className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0">
+              <p className="max-w-2xl text-center text-lg text-slate-500 font-medium leading-relaxed m-0 mx-auto">
                 A proven process, a skilled team and the right technology to deliver exceptional results.
               </p>
             )}
@@ -551,8 +520,8 @@ export function AllServicesPage() {
                     <div className={`w-14 h-14 rounded-full ${isEven ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'bg-blue-50 text-blue-500 shadow-sm'} flex items-center justify-center mb-6 border border-white`}>
                       {renderStepIcon(idx)}
                     </div>
-                    <h4 className="text-[15px] font-bold text-[#0f172a] uppercase tracking-wider mb-3">{step.title}</h4>
-                    <p className="text-[13px] text-slate-500 font-medium leading-relaxed">
+                    <h4 className="text-[15px] font-bold text-[#0f172a] uppercase tracking-wider mb-3 text-center">{step.title}</h4>
+                    <p className="text-[13px] text-slate-500 font-medium leading-relaxed text-center">
                       {step.desc}
                     </p>
                   </div>

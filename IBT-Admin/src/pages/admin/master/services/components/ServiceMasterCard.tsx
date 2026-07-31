@@ -17,6 +17,21 @@ type ServiceMasterCardProps = {
   onViewDetails?: (item: ServiceMasterItem) => void
 }
 
+function stripHtml(raw?: string | null): string {
+  if (!raw) return ''
+  return raw
+    .replace(/<ul class="custom-key-highlights"[^>]*>[\s\S]*?<\/ul>/gi, '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export function ServiceMasterCard({
   service,
   mode,
@@ -102,8 +117,12 @@ export function ServiceMasterCard({
           )}
         </div>
 
-        {/* Metadata */}
+        {/* Metadata & Badges */}
         <div className="mt-1 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-[var(--ui-muted)]">
+          <span className={service.categoryType === 'PRODUCT' ? 'rounded bg-purple-100 text-purple-700 px-2 py-0.5 font-bold text-[10px]' : 'rounded bg-blue-100 text-blue-700 px-2 py-0.5 font-bold text-[10px]'}>
+            {service.categoryType === 'PRODUCT' ? 'PRODUCT' : 'SERVICE'}
+          </span>
+
           <span className="rounded bg-[var(--ui-surface-muted)] px-1.5 py-0.5 font-mono">
             /{service.slug}
           </span>
@@ -112,8 +131,8 @@ export function ServiceMasterCard({
         </div>
 
         {/* Description */}
-        <p className="mt-2 hidden sm:-webkit-box sm:line-clamp-2 text-sm leading-relaxed text-[var(--ui-text)] opacity-80">
-          {service.description}
+        <p className="mt-1.5 line-clamp-2 text-xs sm:text-sm leading-relaxed text-[var(--ui-text)] opacity-80">
+          {stripHtml(service.description)}
         </p>
 
         {/* Tags */}

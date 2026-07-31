@@ -696,6 +696,8 @@ export const getPublicProjectBySlug = async (slug: string) => {
 export const getPublicServices = async (filters: {
   search?: string;
   tag?: string;
+  categoryType?: string;
+  isFeatured?: boolean;
   page?: number;
   limit?: number;
 }) => {
@@ -711,6 +713,8 @@ export const getPublicServices = async (filters: {
           has: filters.tag.toLowerCase(),
         }
       : undefined,
+    categoryType: filters.categoryType ? filters.categoryType : undefined,
+    isFeatured: filters.isFeatured !== undefined ? filters.isFeatured : undefined,
   };
 
   return toPaginated(

@@ -12,7 +12,6 @@ let io: Server | null = null;
 const serializeSiteSettingsPayload = (payload: any) => {
   const serialized = { ...payload };
 
-  // Recursively find Dates and convert to ISO strings
   const serializeDates = (obj: any) => {
     if (!obj || typeof obj !== 'object') return;
 

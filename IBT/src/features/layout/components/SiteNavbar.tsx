@@ -11,11 +11,10 @@ const navItems = [
   { href: '/', label: 'Home' },
   { href: '/about-us', label: 'About Us' },
   { href: '/services', label: 'Services' },
+  { href: '/products', label: 'Products' },
   { href: '/internship', label: 'Internship' },
   { href: '/ibt-labs', label: 'IBT Labs' },
-
   { href: '/contact-us', label: 'Contact Us' }
-
 ];
 
 export function SiteNavbar() {

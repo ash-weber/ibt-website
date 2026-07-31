@@ -36,6 +36,8 @@ export type PublicService = {
   imageUrl?: string | null;
   projectUrl?: string | null;
   tags?: string[];
+  categoryType?: 'SERVICE' | 'PRODUCT';
+  isFeatured?: boolean;
 };
 
 export type PublicLabProject = {
@@ -288,8 +290,11 @@ class ApiClient {
     return this.requestPaginated<PublicStat>('/stats', this.publicPrefix, { page, limit });
   }
 
-  async getServices(page = 1, limit = 6): Promise<PaginatedResult<PublicService>> {
-    return this.requestPaginated<PublicService>('/services', this.publicPrefix, { page, limit });
+  async getServices(page = 1, limit = 6, categoryType?: string, isFeatured?: boolean): Promise<PaginatedResult<PublicService>> {
+    const params: Record<string, any> = { page, limit };
+    if (categoryType) params.categoryType = categoryType;
+    if (isFeatured !== undefined) params.isFeatured = isFeatured;
+    return this.requestPaginated<PublicService>('/services', this.publicPrefix, params);
   }
 
   async getProjects(page = 1, limit = 6): Promise<PaginatedResult<PublicLabProject>> {
