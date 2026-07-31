@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ActionButton } from './ActionButton'
 import { Modal } from './Modal'
-
+// DeleteConfirmationModal is used to confirm the deletion of an item
 type DeleteConfirmationModalProps = {
   isOpen: boolean
   itemLabel?: string

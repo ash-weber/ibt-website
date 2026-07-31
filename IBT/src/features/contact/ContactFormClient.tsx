@@ -47,7 +47,7 @@ export function ContactFormClient({ initialSettings, initialBranches }: ContactF
       // Allow only letters and spaces
       value = value.replace(/[^a-zA-Z\s]/g, '')
     } else if (field === 'email') {
-      // Allow only valid email characters
+      // Allow only valid email-characters
       value = value.replace(/[^a-zA-Z0-9@.]/g, '')
     }
     setFormData((prev) => ({ ...prev, [field]: value }))
