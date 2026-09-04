@@ -530,7 +530,7 @@ export function AllProductsPage() {
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
             
             {/* Left Column */}
-            <div className="lg:col-span-5 flex flex-col items-start text-left">
+            <div className="lg:col-span-5 flex flex-col items-start text-left min-w-0">
               <span className="text-[13px] font-bold uppercase tracking-[0.2em] text-[#e63946] mb-2 leading-none">
                 {settings.productsMicroAppsSubtitle || 'MICRO APPS THAT'}
               </span>
@@ -553,7 +553,7 @@ export function AllProductsPage() {
               <h3 className="text-lg font-bold text-[#1d3557] mb-3">{settings.productsMicroAppsLeftHeading || 'What is a Micro-App?'}</h3>
               <div 
                 className="prose prose-sm max-w-none text-slate-600 prose-p:my-1.5 prose-p:leading-relaxed mb-6 prose-strong:font-bold prose-strong:text-[#1d3557] prose-a:text-blue-600 hover:prose-a:text-blue-700" 
-                dangerouslySetInnerHTML={{ __html: settings.productsMicroAppsLeftText || 'A Micro-App is an application designed to solve one specific business problem.<br/><br/>For example, customers may make a payment but never receive a proper receipt. Instead of investing in a large billing system, a single Micro-App can generate a receipt instantly and send it via email or WhatsApp.' }} 
+                dangerouslySetInnerHTML={{ __html: (settings.productsMicroAppsLeftText || 'A Micro-App is an application designed to solve one specific business problem.<br/><br/>For example, customers may make a payment but never receive a proper receipt. Instead of investing in a large billing system, a single Micro-App can generate a receipt instantly and send it via email or WhatsApp.').replace(/&nbsp;|&#160;/g, ' ') }} 
               />
               
               <h3 className="text-[15px] font-bold text-[#1d3557] mb-4">Micro-Apps are:</h3>
@@ -575,11 +575,11 @@ export function AllProductsPage() {
             </div>
             
             {/* Right Column */}
-            <div className="lg:col-span-7 flex flex-col gap-2 text-[13px] text-slate-700 font-medium leading-relaxed pt-1">
+            <div className="lg:col-span-7 flex flex-col gap-2 text-[13px] text-slate-700 font-medium leading-relaxed pt-1 min-w-0">
               {settings.productsMicroAppsRightTextTop ? (
                 <div 
                   className="prose prose-sm max-w-none prose-p:my-1.5 prose-p:leading-relaxed prose-strong:font-bold prose-strong:text-[#1d3557] prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-700" 
-                  dangerouslySetInnerHTML={{ __html: settings.productsMicroAppsRightTextTop }} 
+                  dangerouslySetInnerHTML={{ __html: settings.productsMicroAppsRightTextTop.replace(/&nbsp;|&#160;/g, ' ') }} 
                 />
               ) : (
                 <>
@@ -688,7 +688,7 @@ export function AllProductsPage() {
                         </div>
 
                         {/* Description */}
-                        <p className="text-xs text-slate-600 leading-relaxed mb-3 line-clamp-3 overflow-hidden break-words">
+                        <p className="text-xs text-slate-600 leading-relaxed mb-3 line-clamp-3 overflow-hidden">
                           {stripHtml(project.description)}
                         </p>
                       </div>
